@@ -41,13 +41,15 @@ def index_corpus(corpus : DocumentCorpus) -> Index:
 if __name__ == "__main__":
     corpus_path = Path()
     d = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
+    token_processor = BasicTokenProcessor()
 
     # Build the index over this directory.
     index = index_corpus(d)
     
     # We aren't ready to use a full query parser;
     # for now, we'll only support single-term queries.
-    query = "whale" # hard-coded search for "whale"
+    query = token_processor.process_token(input("Enter single-term search query: "))
+    # query = "whale" # hard-coded search for "whale"
     for p in index.get_postings(query):
         print(f"Document ID {p.doc_id}")
 
