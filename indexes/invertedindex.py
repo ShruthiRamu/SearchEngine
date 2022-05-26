@@ -16,7 +16,7 @@ class InvertedIndex(Index):
                 # If the postings of term already exists, add doc_id to the end of postings list
                 postings.append(doc_id)
         else:
-            self._dictionary[term] = Posting(doc_id=doc_id)
+            self._dictionary[term] = [Posting(doc_id=doc_id)]
 
     def get_postings(self, term: str) -> Iterable[Posting]:
         """Returns a list of Postings for all documents that contain the given term."""
