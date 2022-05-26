@@ -29,6 +29,11 @@ class TermDocumentIndex(Index):
     def get_postings(self, term: str) -> Iterable[Posting]:
         """Returns a list of Postings for all documents that contain the given term."""
         # TODO: implement this method.
+
+
+    # Binary search the self.vocabulary list for the given term. (see bisect_left, above)
+    # Walk down the self._matrix row for the term and collect the document IDs (column indices)
+    # of the "true" entries.
         # Binary search the self.vocabulary list for the given term. (see bisect_left, above)
         vocab_index = bisect_left(self.vocabulary, term)
         if vocab_index != len(self.vocabulary) and self.vocabulary[vocab_index] == term:
