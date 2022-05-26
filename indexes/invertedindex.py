@@ -12,9 +12,9 @@ class InvertedIndex(Index):
         if term in self._dictionary.keys():
             postings = self._dictionary[term]
             # postings sorted
-            if postings[-1] != doc_id: # No duplicate of doc_id for same term
+            if postings[-1].doc_id != doc_id: # No duplicate of doc_id for same term
                 # If the postings of term already exists, add doc_id to the end of postings list
-                postings.append(doc_id)
+                postings.append(Posting(doc_id=doc_id))
         else:
             self._dictionary[term] = [Posting(doc_id=doc_id)]
 

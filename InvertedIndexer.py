@@ -30,6 +30,11 @@ if __name__ == "__main__":
     # Build the index over this directory.
     index = index_corpus(d)
 
+    for posting in index.get_postings("whale"):
+        print(posting)
+
+    #print(index.get_postings("whale"))
+
     # We aren't ready to use a full query parser;
     # for now, we'll only support single-term queries.
     query = "whale"  # hard-coded search for "whale"
