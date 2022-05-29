@@ -17,7 +17,7 @@ class JsonFileDocument(Document):
     # returns a string
     def get_title(self) -> str:
         # Opening JSON file
-        f = open(self.path)
+        f = open(self.path, encoding="utf8")
 
         # returns JSON object as
         # a dictionary
@@ -38,7 +38,7 @@ class JsonFileDocument(Document):
     # returns TextIOWrapper
     def get_content(self) -> Iterable[str]:
         # Opening JSON file
-        f = open(self.path)
+        f = open(self.path, encoding="utf8")
 
         # returns JSON object as
         # a dictionary
