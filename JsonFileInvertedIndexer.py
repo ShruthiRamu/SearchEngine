@@ -3,13 +3,14 @@ from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
 from indexes.invertedindex import InvertedIndex
 from text.basictokenprocessor import BasicTokenProcessor
+from text.newtokenprocessor import NewTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 
 """This basic program builds a term-document matrix over the .txt files in 
 the same directory as this file."""
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
-    token_processor = BasicTokenProcessor()
+    token_processor = NewTokenProcessor()
     index = InvertedIndex()
     # Iterate through the documents in the corpus:
     for d in corpus:
@@ -19,13 +20,15 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
             # Process each token.
             term = token_processor.process_token(token)
             # Add each processed term to the index with .add_term().
-            index.add_term(term=term, doc_id=d.id)
+            # index.add_term(term=term, doc_id=d.id)
+            for i in range(len(term)):
+                index.add_term(term=term[i], doc_id=d.id)
     return index
 
 
 if __name__ == "__main__":
     # TODO: Need to add the json files to the repository
-    corpus_path = Path('all-nps-sites-extracted')
+    corpus_path = Path('testfiles')
     d = DirectoryCorpus.load_json_directory(corpus_path, ".json")
 
     # Build the index over this directory.

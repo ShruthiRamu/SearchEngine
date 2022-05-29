@@ -1,4 +1,3 @@
-from curses.ascii import isalnum
 from .tokenprocessor import TokenProcessor
 import re
 from typing import Iterable
@@ -8,15 +7,15 @@ from porter2stemmer import Porter2Stemmer
 class NewTokenProcessor(TokenProcessor):
     whitespace_re = re.compile(r"\W+")
 
-    def process_token(self, token: str) -> Iterable[str]:
+    def process_token(self, token: str):
         stemmer = Porter2Stemmer()
         new_token = token
         new_token2 = ""
         hyphen = False
         all_tokens = []
-        if not isalnum(new_token[0]):
+        if not new_token[0].isalnum():
             new_token = new_token[1:]
-        if not isalnum(new_token[-1]):
+        if len(new_token) > 0 and not new_token[-1].isalnum():
             new_token = new_token[0:-2]
         for i in new_token:
             if i != self.whitespace_re and i != "'" and i != '"':
