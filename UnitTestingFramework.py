@@ -25,9 +25,10 @@ class TestSearchEngine(unittest.TestCase):
                    'play': (('pets4', [7])),
                    'have': (('pets5', [3]))
                    }
+        petdict = (list(petdict.keys()).sort())
         corpus = DirectoryCorpus.load_text_directory(Path('utf_corpus'), ".txt")
         index = index_corpus(corpus)
-        self.assertEqual(index.__dict__, petdict)
+        self.assertEqual(index.vocabulary(), petdict)
 
 
 if __name__ == '__main__':
