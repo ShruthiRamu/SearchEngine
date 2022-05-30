@@ -32,4 +32,9 @@ class PositionalInvertedIndex(Index):
     def vocabulary(self) -> Iterable[str]:
         """ Returns a sorted vocabulary list """
         #TODO: WHEN TO SORT?
-        return list(self._dictionary.keys()).sort()
+        #  Added this logic to print first 1000 vocab when special query is entered
+        vocab = []
+        for key in self._dictionary.keys():
+            vocab.append(key)
+        vocab.sort()
+        return vocab

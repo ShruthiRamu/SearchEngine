@@ -7,7 +7,7 @@ from queries import BooleanQueryParser
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 
-"""This basic program builds a term-document matrix over the .txt files in 
+"""This basic program builds a positional inverted index over the .txt files in 
 the same directory as this file."""
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     index = index_corpus(corpus)
 
     #  term = '"new york university"' --- Phrase Literal
-    #  term = "new york" ---And query
-    term = "new + york"  # ---Or query
+    term = "new york" #  ---And query
+    #  term = "new + york"  # ---Or query
     print(f"\nTerm:{term}")
 
     booleanqueryparser = BooleanQueryParser()
