@@ -4,47 +4,39 @@ from indexes import Index
 from indexes.positionalinvertedindex import PositionalInvertedIndex
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
-
-"""This basic program builds a positionalinvertedindex over the .txt files in 
-the same directory as this file."""
+from time import time_ns
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
     token_processor = BasicTokenProcessor()
     index = PositionalInvertedIndex()
-    # Iterate through the documents in the corpus:
     for d in corpus:
-        # Tokenize each document's content,
         stream = EnglishTokenStream(d.get_content())
-        position = 1
-        print(f"\nDoc ID: {d.id}")
+        position = 1 # ASK ABOUT THIS?
         for token in stream:
-            # Process each token.
             term = token_processor.process_token(token)
-            print(f"Term: {term}, Position: {position}")
             index.add_term(term=term, position=position, doc_id=d.id)
             position += 1
     return index
 
+" Main Application of Search Engine "
 
 if __name__ == "__main__":
+
+    # Assuming in cwd
+    # dir = input("Enter Directory Name: ")
+    # Construct a path
     corpus_path = Path()
     corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
 
-    # Build the index over this directory.
+    start = time_ns()
     index = index_corpus(corpus)
+    end = time_ns()
+    print(f"Building Index: {round(end-start, 2)} ns")
 
-    term = "new"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
+    while True:
+        query = input("Enter Search Query: ")
+        # Handle Special Query
 
-    term = "york"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
-
-    term = "in"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
-
+        # Handle Query
+        if True:
+            break
