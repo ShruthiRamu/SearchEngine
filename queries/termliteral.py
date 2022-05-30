@@ -1,3 +1,5 @@
+from typing import List
+
 from indexes.postings import Posting
 from .querycomponent import QueryComponent
 
@@ -9,7 +11,7 @@ class TermLiteral(QueryComponent):
     def __init__(self, term : str):
         self.term = term
 
-    def get_postings(self, index) -> list[Posting]:
+    def get_postings(self, index) -> List[Posting]:
         return index.get_postings(self.term)
 
     def __str__(self) -> str:

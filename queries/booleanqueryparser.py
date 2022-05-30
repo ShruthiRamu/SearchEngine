@@ -1,4 +1,5 @@
-from . import AndQuery, OrQuery, QueryComponent, TermLiteral
+from . import AndQuery, OrQuery, QueryComponent, TermLiteral, PhraseLiteral
+
 
 class BooleanQueryParser:
     class _StringBounds:
@@ -60,6 +61,29 @@ class BooleanQueryParser:
         while subquery[start_index] == ' ':
             start_index += 1
 
+        # check if the first non-space character is a double-quote (")
+        if subquery[start_index] == '"':
+            # skip the  quote
+            start_index += 1
+
+            next_quote = subquery.find('"', start_index)
+            if next_quote < 0:
+                # No more literals in this subquery.
+                length_out = sub_length - start_index
+            else:
+                length_out = next_quote - start_index
+
+            # we reached to the end of query
+            # TODO: updated to handle the case when query is '"new york university"' where the last character is double quotes
+            if length_out == 0:
+                return None
+
+            # This is a phrase literal containing terms within quotes.
+            return BooleanQueryParser._Literal(
+                BooleanQueryParser._StringBounds(start_index, length_out),
+                PhraseLiteral(subquery[start_index:start_index + length_out])
+            )
+
         # Locate the next space to find the end of this literal.
         next_space = subquery.find(' ', start_index)
         if next_space < 0:
@@ -106,13 +130,16 @@ class BooleanQueryParser:
                 # Extract the next literal from the subquery.
                 lit = BooleanQueryParser._find_next_literal(subquery, sub_start)
 
-                # Add the literal component to the conjunctive list.
-                subquery_literals.append(lit.literal_component)
+                # Updated this code to handle the None value return from _find_next_literal
+                if lit != None:
+                    # Add the literal component to the conjunctive list.
+                    subquery_literals.append(lit.literal_component)
 
-                # Set the next index to start searching for a literal.
-                sub_start = lit.bounds.start + lit.bounds.length
+                    # Set the next index to start searching for a literal.
+                    sub_start = lit.bounds.start + lit.bounds.length
                 # Terminate once we reach the end of the query.
-
+                else :
+                    sub_start = len(subquery)
             # After processing all literals, we are left with a conjunctive list
 			# of query components, and must fold that list into the final disjunctive list
 			# of components.
