@@ -2,15 +2,23 @@ from pathlib import Path
 from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
 from indexes.positionalinvertedindex import PositionalInvertedIndex
+from soundexcode import get_encoding, soundex_code
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 
-"""This basic program builds a positionalinvertedindex over the .txt files in 
+"""This basic program builds a term-document matrix over the .txt files in 
 the same directory as this file."""
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
     token_processor = BasicTokenProcessor()
-    index = PositionalInvertedIndex()
+    pindex = PositionalInvertedIndex()
+
+    # Create Soundex Index
+    # USE the InvertedIndex?
+
+    # Get encoding
+    # encoding = get_encoding()
+
     # Iterate through the documents in the corpus:
     for d in corpus:
         # Tokenize each document's content,
@@ -21,9 +29,15 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
             # Process each token.
             term = token_processor.process_token(token)
             print(f"Term: {term}, Position: {position}")
-            index.add_term(term=term, position=position, doc_id=d.id)
+            pindex.add_term(term=term, position=position, doc_id=d.id)
             position += 1
-    return index
+
+        # Process author first and last name
+        # Get soundex code for each term
+        # code = soundex_code(name, encoding)
+        # soundexindex.addterm(term=code, doc_id=d.id)
+        # Returns two indexes?
+    return pindex
 
 
 if __name__ == "__main__":
@@ -32,19 +46,3 @@ if __name__ == "__main__":
 
     # Build the index over this directory.
     index = index_corpus(corpus)
-
-    term = "new"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
-
-    term = "york"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
-
-    term = "in"
-    print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
-        print(posting)
-
