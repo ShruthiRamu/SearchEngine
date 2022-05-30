@@ -76,6 +76,16 @@ if __name__ == "__main__":
             print(*vocab, sep="\n")
             print("Total number of vocabulary terms: ", len(index.vocabulary()))
 
+        # print the documents that matches the provided author
+        elif query.startswith(":author"):
+            hash_term = query.split(" ")[1]
+            if not hash_term:
+                print("No author specified")
+                continue
+            # TODO: Update and call to get the postings. Display the documents from that author
+            print("Author: ")
+            print("Documents matching the author: ")
+
         # parse the query
         else:
                 term = query
