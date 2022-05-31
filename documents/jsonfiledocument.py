@@ -30,6 +30,13 @@ class JsonFileDocument(Document):
         f.close()
         return title
 
+    def get_author(self) -> str:
+        f = open(self.path, encoding="utf8")
+        data = json.load(f)
+        author = data['author']
+        f.close()
+        return author
+
     @property
     def title(self) -> str:
         title = self.get_title()
