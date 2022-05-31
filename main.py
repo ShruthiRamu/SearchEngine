@@ -11,7 +11,7 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
     index = PositionalInvertedIndex()
     for d in corpus:
         stream = EnglishTokenStream(d.get_content())
-        position = 1 # ASK ABOUT THIS?
+        position = 1
         for token in stream:
             term = token_processor.process_token(token)
             index.add_term(term=term, position=position, doc_id=d.id)
