@@ -36,8 +36,7 @@ class AndQuery(QueryComponent):
 
             while i < len(componentPostings):
                 updatedList = merge_function.merge(mergedList, componentPostings[i], 'and')
-                if len(updatedList) > 0:
-                    mergedList.append(updatedList)
+                mergedList = updatedList
                 i += 1
 
         result = mergedList

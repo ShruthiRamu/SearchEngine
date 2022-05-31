@@ -36,7 +36,7 @@ if __name__ == "__main__":
     index = index_corpus(corpus)
 
     #  term = '"new york university"' --- Phrase Literal
-    term = "new york" #  ---And query
+    term = "new york" # ---And query
     #  term = "new + york"  # ---Or query
     print(f"\nTerm:{term}")
 

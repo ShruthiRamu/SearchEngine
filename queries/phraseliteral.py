@@ -42,7 +42,8 @@ class PhraseLiteral(QueryComponent):
 
             while i < len(componentPostings):
                 updatedList = merge_function.merge_phraseliterals(mergedList, componentPostings[i], difference=i)
-                mergedList.append(updatedList)
+                #mergedList = merge_function.merge_phraseliterals(mergedList, componentPostings[i], difference=i)
+                mergedList = updatedList
                 i += 1
 
         result = mergedList

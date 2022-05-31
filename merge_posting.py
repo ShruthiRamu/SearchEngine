@@ -56,7 +56,7 @@ def merge(x: [Posting], y: [Posting], op: str):
 
 def merge_phraseliterals(x: [Posting], y: [Posting], difference) :
   """
-    Do pairwise positional merge of posting x and y based on the phrase literal logic
+    Do pairwise positional merge of posting positions of x and y based on the phrase literal logic
     Assume x & y sorted.
     """
   #  TODO: Yet to fix this function to work as expected.
@@ -67,23 +67,30 @@ def merge_phraseliterals(x: [Posting], y: [Posting], difference) :
   l = 0  # Index of positions of y
   merged_posting = []
 
-  while i<len(x) and j<len(y):
-    if x[i].doc_id == y[j].doc_id :
+  while i < len(x) and j < len(y):
+    # check if the term is present in both the document
+    if x[i].doc_id == y[j].doc_id:
+        # get the positions list for the document
       positions_x = x[i].positions
       positions_y = y[j].positions
       k=0
       l=0
-      while k<len(positions_x) and l<len(positions_y):
+      while k < len(positions_x) and l < len(positions_y):
+        # check if the difference of the positions is what we are looking for
         if positions_y[l] - positions_x[k] == difference:
-          # add the first document id
+          # add the first ever document id to the list
           if len(merged_posting) == 0:
             merged_posting.append(x[i])
-          # do not add duplicate
+          # do not add duplicate from the next iteration
           if len(merged_posting) !=0 and x[i].doc_id != merged_posting[-1].doc_id:
             merged_posting.append(x[i])
-        k+=1
-        l+=1
-
+          k+=1
+          l+=1
+        elif positions_y[l] < positions_x[k]:
+          l+=1
+        # Check with professor what to do if the lower term is > higher term
+        # elif positions_y[l] > positions_x[k]:
+        #   k+=1
     i += 1
     j += 1
 
