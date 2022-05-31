@@ -59,7 +59,6 @@ def merge_phraseliterals(x: [Posting], y: [Posting], difference) :
     Do pairwise positional merge of posting positions of x and y based on the phrase literal logic
     Assume x & y sorted.
     """
-  #  TODO: Yet to fix this function to work as expected.
   i = 0  # Index of x
   j = 0  # Index of y
 

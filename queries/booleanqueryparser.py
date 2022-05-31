@@ -61,6 +61,8 @@ class BooleanQueryParser:
         while subquery[start_index] == ' ':
             start_index += 1
 
+        # TODO: handle '-' Not queries here and set the query component isPositive as false for it
+
         # check if the first non-space character is a double-quote (")
         if subquery[start_index] == '"':
             # skip the  quote

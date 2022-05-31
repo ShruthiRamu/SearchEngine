@@ -25,7 +25,6 @@ class OrQuery(QueryComponent):
             componentPostings.append(posting)
 
         # do pairwise merging of the postings
-        # TODO: Yet to fix this to work as expected
         if len(componentPostings) >= 2:
             first = componentPostings[0]
             second = componentPostings[1]
