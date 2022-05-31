@@ -43,17 +43,17 @@ def soundex_code(term, encoding, code_len=4):
     return code
 
 # What about first name like kyaw htet?
-name = 'hermann'
-print(name, ": ", soundex_code(name, encoding=get_encoding()))
-name = 'curie'
-print(name, ": ", soundex_code(name, encoding=get_encoding()))
-name = 'oconner'
-print(name, ": ", soundex_code(name, encoding=get_encoding()))
-term = 'piece'
-print(term, ": ", soundex_code(term, encoding=get_encoding()))
-term = 'peace'
-print(term, ": ", soundex_code(term, encoding=get_encoding()))
-term = 'too'
-print(term, ": ", soundex_code(term, encoding=get_encoding()))
-term = 'two'
-print(term, ": ", soundex_code(term, encoding=get_encoding()))
+# name = 'hermann'
+# print(name, ": ", soundex_code(name, encoding=get_encoding()))
+# name = 'curie'
+# print(name, ": ", soundex_code(name, encoding=get_encoding()))
+# name = 'oconner'
+# print(name, ": ", soundex_code(name, encoding=get_encoding()))
+# term = 'piece'
+# print(term, ": ", soundex_code(term, encoding=get_encoding()))
+# term = 'peace'
+# print(term, ": ", soundex_code(term, encoding=get_encoding()))
+# term = 'too'
+# print(term, ": ", soundex_code(term, encoding=get_encoding()))
+# term = 'two'
+# print(term, ": ", soundex_code(term, encoding=get_encoding()))

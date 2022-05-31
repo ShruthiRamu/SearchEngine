@@ -1,6 +1,7 @@
 from email.generator import Generator
 from .tokenstream import TokenStream
 
+
 class EnglishTokenStream(TokenStream):
     def __init__(self, source):
         """Constructs a stream over a TextIOWrapper of text"""

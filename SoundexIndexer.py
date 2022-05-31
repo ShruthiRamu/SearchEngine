@@ -1,43 +1,39 @@
 from pathlib import Path
 from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
-from indexes.positionalinvertedindex import PositionalInvertedIndex
+from indexes.invertedindex import InvertedIndex
+from indexes.soundexindex import SoundexIndex
 from soundexcode import get_encoding, soundex_code
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 
-"""This basic program builds a term-document matrix over the .txt files in 
-the same directory as this file."""
-
+""" This basic program builds a Soundex Index over json files to search the authors with similar sounding names """
 def index_corpus(corpus: DocumentCorpus) -> Index:
     token_processor = BasicTokenProcessor()
-    pindex = PositionalInvertedIndex()
+    index = InvertedIndex()
+    soundex_index = SoundexIndex()
 
-    # Create Soundex Index
-    # USE the InvertedIndex?
-
-    # Get encoding
-    # encoding = get_encoding()
+    # Soundex Letter -> Digit Mapping
+    encoding = get_encoding()
 
     # Iterate through the documents in the corpus:
     for d in corpus:
         # Tokenize each document's content,
         stream = EnglishTokenStream(d.get_content())
-        position = 1
-        print(f"\nDoc ID: {d.id}")
         for token in stream:
             # Process each token.
             term = token_processor.process_token(token)
-            print(f"Term: {term}, Position: {position}")
-            pindex.add_term(term=term, position=position, doc_id=d.id)
-            position += 1
+            index.add_term(term, d.id)
+
+        #code = soundex_code(term, encoding)
+        #soundex_index.add_term(code, term)
 
         # Process author first and last name
         # Get soundex code for each term
         # code = soundex_code(name, encoding)
         # soundexindex.addterm(term=code, doc_id=d.id)
         # Returns two indexes?
-    return pindex
+    return index, soundex_index
 
 
 if __name__ == "__main__":
