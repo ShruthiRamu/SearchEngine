@@ -38,8 +38,25 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
     return index, soundex_index
 
 
+def soundex_indexer(query:str, dir_name='mlb-articles-4000'):
+    corpus_path = Path(dir_name)
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    index, soundex_index = index_corpus(corpus)
+    print("\n==========================================================")
+    encoding = get_encoding()
+    code = soundex_code(query, encoding)
+    authors = soundex_index.get_postings(code)
+    if authors:
+        for author in authors:
+            postings = index.get_postings(author)
+            doc_ids = [posting.doc_id for posting in postings]
+            print(f"Author: {author.capitalize()} => Document(s): {doc_ids}")
+    else:
+        print("No author matches found")
+
+
 if __name__ == "__main__":
-    corpus_path = Path.cwd() / 'mlb-articles-4000'
+    corpus_path = Path.cwd() / 'mlb-articles-small'
     corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
     index, soundex_index = index_corpus(corpus)
 
@@ -49,13 +66,16 @@ if __name__ == "__main__":
     # S360 => ['stier', 'star']
     # Z520 => ['zahneis', 'zinkie']
 
-    print("\n====================================================")
     encoding = get_encoding()
     query = "zinkie"
     code = soundex_code(query, encoding)
     authors = soundex_index.get_postings(code)
-    postings = [index.get_postings(author) for author in authors]
-    print("Matches:")
-    for a, posting in zip(authors, postings):
-        doc_ids = [p.doc_id for p in posting]
-        print(f"Author: {a.capitalize()} => Document(s): {doc_ids}")
+    authors = soundex_index.get_postings(code)
+    if authors:
+        print("\n====================================================")
+        for author in authors:
+            postings = index.get_postings(author)
+            doc_ids = [posting.doc_id for posting in postings]
+            print(f"Author: {author.capitalize()} => Document(s): {doc_ids}")
+    else:
+        print("\nNo author matches found")
