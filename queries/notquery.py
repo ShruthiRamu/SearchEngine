@@ -6,23 +6,16 @@ from queries import QueryComponent
 
 
 class NotQuery(QueryComponent):
-    def __init__(self, components: List[QueryComponent]):
-        self.components = components
+    def __init__(self, component: QueryComponent):
+        self.component = component  # just a single component
 
     def get_postings(self, index: Index) -> List[Posting]:
         result = [Posting]
-        # TODO: program the merge for an NotQuery, by gathering the postings of the composed QueryComponents and
-        # intersecting the resulting postings.
 
-        componentPostings = []
-        mergedList = [Posting]
-        merge_function = merge_posting
+        # get the postings for the component
+        result = self.component.get_postings(index)
 
-        # TODO: Finish NotQuery merging logic
-
-        result = mergedList
         return result
 
     def __str__(self):
-        return " NOT ".join(map(str, self.components))
-
+        return "NOT ". join(map(self.component))

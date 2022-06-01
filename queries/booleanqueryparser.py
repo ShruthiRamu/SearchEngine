@@ -56,12 +56,16 @@ class BooleanQueryParser:
         """
         sub_length = len(subquery)
         length_out = 0
+        is_negative_component = False
 
         # Skip past white space.
         while subquery[start_index] == ' ':
             start_index += 1
 
         # TODO: handle '-' Not queries here and set the query component isPositive as false for it
+
+        if(subquery[start_index] == '-'):
+            is_negative_component = True
 
         # check if the first non-space character is a double-quote (")
         if subquery[start_index] == '"':
@@ -83,7 +87,7 @@ class BooleanQueryParser:
             # This is a phrase literal containing terms within quotes.
             return BooleanQueryParser._Literal(
                 BooleanQueryParser._StringBounds(start_index, length_out),
-                PhraseLiteral(subquery[start_index:start_index + length_out])
+                PhraseLiteral(subquery[start_index:start_index + length_out], is_negative=is_negative_component)
             )
 
         # Locate the next space to find the end of this literal.
@@ -97,7 +101,7 @@ class BooleanQueryParser:
         # This is a term literal containing a single term.
         return BooleanQueryParser._Literal(
             BooleanQueryParser._StringBounds(start_index, length_out),
-            TermLiteral(subquery[start_index:start_index + length_out])
+            TermLiteral(subquery[start_index:start_index + length_out], is_negative=is_negative_component)
         )
 
         # TODO:

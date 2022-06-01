@@ -29,7 +29,8 @@ class AndQuery(QueryComponent):
         if len(componentPostings) >= 2:
             first = componentPostings[0]
             second = componentPostings[1]
-            # TODO: check if QueryComponent.isPositive is set to false which is 'and not' case and merge correspondingly
+            # TODO: check if QueryComponent.is_positive is set to false which is 'and not' case and merge correspondingly
+
             mergedList = merge_function.merge(first, second, 'and')
 
             i = 2  # continue with next index

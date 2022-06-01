@@ -35,8 +35,10 @@ if __name__ == "__main__":
     # Build the index over this directory.
     index = index_corpus(corpus)
 
-    #  term = '"new york university"' --- Phrase Literal
-    term = "new york" # ---And query
+    term = '-new york'# ---Not query
+    #term = 'university'
+    #term = '"new york university"' #--- Phrase Literal
+    #term = "new york" # ---And query
     #  term = "new + york"  # ---Or query
     print(f"\nTerm:{term}")
 
