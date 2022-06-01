@@ -5,4 +5,6 @@ class Posting:
         self.positions = [] if position == -1 else [position]
 
     def __str__(self):
-        return f"(ID: {self.doc_id }, -> {[pos for pos in self.positions]})"
+        if self.positions:
+            return f"(ID: {self.doc_id }, -> {[pos for pos in self.positions]})"
+        return str(self.doc_id)

@@ -23,4 +23,6 @@ class InvertedIndex(Index):
 
     def vocabulary(self) -> Iterable[str]:
         """ Returns a sorted vocabulary list """
-        return list(self._dictionary.keys()).sort()
+        vocab = list(self._dictionary.keys())
+        vocab.sort()
+        return vocab

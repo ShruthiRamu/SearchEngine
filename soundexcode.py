@@ -42,7 +42,11 @@ def soundex_code(term, encoding, code_len=4):
     code = term[0].upper() + ''.join([str(c) for c in code])
     return code
 
+# a -> 0 , r -> 6, d -> 3, i -> 0, n -> 5, g -> 2
 # What about first name like kyaw htet?
+#name = 'harding'
+#print(name, ": ", soundex_code(name, encoding=get_encoding()))
+
 # name = 'hermann'
 # print(name, ": ", soundex_code(name, encoding=get_encoding()))
 # name = 'curie'

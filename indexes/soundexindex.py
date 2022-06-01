@@ -9,7 +9,8 @@ class SoundexIndex(Index):
 
     def add_term(self, code: str, term: str):
         """ Records the term for soundex code """
-        if code in self._dictionary.keys():
+        # TODO: DISCUSS RUN TIME
+        if code in self._dictionary.keys() and term not in self._dictionary[code]:
             self._dictionary[code].append(term)
         else:
             self._dictionary[code] = [term]
@@ -20,4 +21,6 @@ class SoundexIndex(Index):
 
     def vocabulary(self) -> Iterable[str]:
         """ Returns a sorted vocabulary list """
-        return list(self._dictionary.keys()).sort()
+        vocab = list(self._dictionary.keys())
+        vocab.sort()
+        return vocab

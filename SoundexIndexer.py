@@ -25,20 +25,37 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
             term = token_processor.process_token(token)
             index.add_term(term, d.id)
 
-        #code = soundex_code(term, encoding)
-        #soundex_index.add_term(code, term)
-
-        # Process author first and last name
-        # Get soundex code for each term
-        # code = soundex_code(name, encoding)
-        # soundexindex.addterm(term=code, doc_id=d.id)
-        # Returns two indexes?
+        # Author Processing
+        author = d.get_author()
+        if author:
+            author = author.split(" ")
+            for token in author:
+                # Author in Index
+                name = token_processor.process_token(token)
+                index.add_term(name, d.id)
+                code = soundex_code(name, encoding)
+                soundex_index.add_term(code, name)
     return index, soundex_index
 
 
 if __name__ == "__main__":
-    corpus_path = Path()
-    corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
+    corpus_path = Path.cwd() / 'mlb-articles-4000'
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    index, soundex_index = index_corpus(corpus)
 
-    # Build the index over this directory.
-    index = index_corpus(corpus)
+    # Colliding Hash Code
+    # C000 => ['cahill', 'cj']
+    # J500 => ['jane', 'jim']
+    # S360 => ['stier', 'star']
+    # Z520 => ['zahneis', 'zinkie']
+
+    print("\n====================================================")
+    encoding = get_encoding()
+    query = "zinkie"
+    code = soundex_code(query, encoding)
+    authors = soundex_index.get_postings(code)
+    postings = [index.get_postings(author) for author in authors]
+    print("Matches:")
+    for a, posting in zip(authors, postings):
+        doc_ids = [p.doc_id for p in posting]
+        print(f"Author: {a.capitalize()} => Document(s): {doc_ids}")
