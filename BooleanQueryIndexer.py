@@ -1,4 +1,5 @@
 from pathlib import Path
+from time import time_ns
 
 from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
@@ -32,37 +33,56 @@ if __name__ == "__main__":
     corpus_path = Path()
     corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
 
+    #corpus_path = Path('all-nps-sites-extracted')
+    #corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+
     # Build the index over this directory.
     index = index_corpus(corpus)
 
-    term = '-new york'# ---Not query
+    start = time_ns()
+    index = index_corpus(corpus)
+    end = time_ns()
+    print(f"Building Index: {round(end - start, 2)} ns")
+
+    #term = 'york -new'# ---Not query
     #term = 'university'
     #term = '"new york university"' #--- Phrase Literal
-    #term = "new york" # ---And query
-    #  term = "new + york"  # ---Or query
+    #term = "in + new" # ---And query
+    #term = "new + york"  # ---Or query
+    #term = 'New York University Ranked Best in New York State'
+    #term = 'in new york'
+    #term = '"York University Opens New Science Lab"' #--- works doc id = 3
+
+    #term = '"new york university" -in'
+
+    #term = '"new york" -science -debt'
+
+    term = '"new york" + university science'
     print(f"\nTerm:{term}")
 
     booleanqueryparser = BooleanQueryParser()
     # parse the given query and print the postings
     querycomponent = booleanqueryparser.parse_query(query=term)
-    for posting in querycomponent.get_postings(index):
+    print("Done with parsing the query, print the output \n")
+    for posting in querycomponent.get_postings(index, BasicTokenProcessor()):
+        print("In main.py: ")
         print(posting)
 
-    term = "new"
-    print(f"\nTerm:{term}")
-    querycomponent = booleanqueryparser.parse_query(term)
-    for posting in querycomponent.get_postings(index):
-        print(posting)
-
-    term = "york"
-    print(f"\nTerm:{term}")
-    querycomponent = booleanqueryparser.parse_query(term)
-    for posting in index.get_postings(term):
-        print(posting)
-
-    term = "in"
-    print(f"\nTerm:{term}")
-    querycomponent = booleanqueryparser.parse_query(term)
-    for posting in index.get_postings(term):
-        print(posting)
-
+    # term = "new"
+    # print(f"\nTerm:{term}")
+    # querycomponent = booleanqueryparser.parse_query(term)
+    # for posting in querycomponent.get_postings(index):
+    #     print(posting)
+    #
+    # term = "york"
+    # print(f"\nTerm:{term}")
+    # querycomponent = booleanqueryparser.parse_query(term)
+    # for posting in index.get_postings(term):
+    #     print(posting)
+    #
+    # term = "in"
+    # print(f"\nTerm:{term}")
+    # querycomponent = booleanqueryparser.parse_query(term)
+    # for posting in index.get_postings(term):
+    #     print(posting)
+    #

@@ -92,5 +92,5 @@ if __name__ == "__main__":
             booleanqueryparser = BooleanQueryParser()
             # parse the given query and print the postings
             querycomponent = booleanqueryparser.parse_query(query=term)
-            for posting in querycomponent.get_postings(index):
+            for posting in querycomponent.get_postings(index, BasicTokenProcessor()):
                 print(posting)

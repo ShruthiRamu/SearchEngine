@@ -13,7 +13,7 @@ class QueryComponent(ABC):
         self.is_negative = is_negative
 
     @abstractmethod
-    def get_postings(self, index) -> List[Posting]:
+    def get_postings(self, index, token_processor) -> List[Posting]:  # send processor as an arg
         """
         Retrieves a list of postings for the query component, using an Index as the source.
         """
