@@ -9,8 +9,10 @@ from queries import BooleanQueryParser
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 from time import time_ns
+from text.newtokenprocessor import NewTokenProcessor
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
+    #token_processor = NewTokenProcessor()
     token_processor = BasicTokenProcessor()
     index = PositionalInvertedIndex()
     for d in corpus:
@@ -18,6 +20,7 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
         position = 1
         for token in stream:
             term = token_processor.process_token(token)
+            # for term in terms:
             index.add_term(term=term, position=position, doc_id=d.id)
             position += 1
     return index
@@ -29,8 +32,9 @@ if __name__ == "__main__":
     # Assuming in cwd
     # dir = input("Enter Directory Name: ")
     # Construct a path
-    corpus_path = Path()
-    corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
+    corpus_path = Path('all-nps-sites-extracted')
+    #corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
 
     start = time_ns()
     index = index_corpus(corpus)
@@ -92,5 +96,8 @@ if __name__ == "__main__":
             booleanqueryparser = BooleanQueryParser()
             # parse the given query and print the postings
             querycomponent = booleanqueryparser.parse_query(query=term)
-            for posting in querycomponent.get_postings(index):
+
+            postings = querycomponent.get_postings(index)
+            for posting in postings:
                 print(posting)
+            print(f"Total Documents: {len(postings)}")
