@@ -26,10 +26,10 @@ class OrQuery(QueryComponent):
             componentPostings.append(posting)
 
         merged_list = reduce(merge_function.or_merge, componentPostings)
-        print("Merged List using reduce() for OR query: ", merged_list)
+        # print("Merged List using reduce() for OR query: ", merged_list)
 
-        for result_posting in merged_list:
-            print(result_posting, "\n-------------")
+        # for result_posting in merged_list:
+        #    print(result_posting, "\n-------------")
 
         result = merged_list
 

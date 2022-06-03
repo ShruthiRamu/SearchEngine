@@ -2,7 +2,7 @@ from itertools import tee
 from pathlib import Path
 from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
-from indexes.biwordindex import BiWordIndex
+from indexes.invertedindex import InvertedIndex
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 
@@ -12,17 +12,16 @@ the same directory as this file."""
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
     token_processor = BasicTokenProcessor()
-    index = BiWordIndex()
+    index = InvertedIndex()
     # Iterate through the documents in the corpus:
     for d in corpus:
         # Tokenize each document's content,
         stream = EnglishTokenStream(d.get_content())
         print(f"\nDoc ID: {d.id}")
+        print("Document Title: ", d.title)
         # list(itertools.pairwise(stream))
 
         for current, next in pairwise(stream):
-            # print(f'Current = {current}, next = {next}')
-            # tokenize both the terms
             current = token_processor.process_token(current)
             next = token_processor.process_token(next)
 
@@ -45,6 +44,8 @@ if __name__ == "__main__":
 
     # Build the index over this directory.
     index = index_corpus(corpus)
+
+    print("vocab: ", index.vocabulary())
 
     term = "new york"
     print(f"\nTerm:{term}")

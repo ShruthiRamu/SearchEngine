@@ -40,7 +40,7 @@ def soundex_code(term, encoding, code_len=4):
         code.append(0)
     # Retain first letter
     code = term[0].upper() + ''.join([str(c) for c in code])
-    return code
+    return code[:4]
 
 # a -> 0 , r -> 6, d -> 3, i -> 0, n -> 5, g -> 2
 # What about first name like kyaw htet?

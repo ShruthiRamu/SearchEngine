@@ -14,6 +14,11 @@ class JsonFileDocument(Document):
         super().__init__(id)
         self.path = path
 
+
+    def get_file_name(self) -> str:
+        return self.path.stem
+
+
     # returns a string
     def get_title(self) -> str:
         # Opening JSON file

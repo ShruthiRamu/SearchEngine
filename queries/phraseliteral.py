@@ -3,6 +3,7 @@ from typing import List, Iterable
 import merge_posting
 from indexes.postings import Posting
 from text import TokenProcessor
+from . import TermLiteral
 from .querycomponent import QueryComponent
 
 
@@ -27,28 +28,39 @@ class PhraseLiteral(QueryComponent):
         merge_function = merge_posting
 
         for term in self.terms:
-            tokenized_term = token_processor.process_token(term)
-            print("Tokenized query term: ", tokenized_term)
-            posting = index.get_postings(term=tokenized_term)
-
+            print("Term: ", term)
+            term_literal = TermLiteral(term, False)
+            posting = term_literal.get_postings(index, token_processor=token_processor)
             # posting = index.get_postings(term=term)
             componentPostings.append(posting)
 
+        posting1 = componentPostings[0]
+        for i in range(1, len(componentPostings)):
+            # get the postings for each component
+            posting2 = componentPostings[i]
+
+            posting1 = merge_function.merge_phrase(posting1, posting2, offset=i)
+
+        result = posting1
+
         # Do pairwise folding and merging
-        it = iter(componentPostings)
-        value = next(it)
-        print("first value: ", value)
-        i = 1
-        for element in it:
-            value = merge_function.merge_phraseliterals(value, element, difference=i)
-            i += 1
-
-        print("Merged List using custom reduce() for Phrase Literal: ", value)
-
-        for result_posting in value:
-            print(result_posting, "\n-------------")
-
-        result = value
+        # it = iter(componentPostings)
+        # value = next(it)
+        # #print("first value: ", value)
+        # i = 1
+        # for element in it:
+        #     #value = merge_function.merge_phraseliterals(value, element, difference=i)
+        #     print("In the phrase literal", value)
+        #     print("In the phrase literal", element)
+        #     value = merge_function.merge_phrase(value, element, offset=i)
+        #     i += 1
+        #
+        # #print("Merged List using custom reduce() for Phrase Literal: ", value)
+        #
+        # #for result_posting in value:
+        # #    print(result_posting, "\n-------------")
+        #
+        # result = value
 
         # do pairwise positional merge
         # if len(componentPostings) >= 2 and (componentPostings[0] is not None) and (componentPostings[1] is not None):

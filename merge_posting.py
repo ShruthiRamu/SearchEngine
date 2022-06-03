@@ -59,6 +59,47 @@ def merge(x: [Posting], y: [Posting], op: str):
     return merged_posting
 
 
+def merge_phrase(x: [Posting], y: [Posting], offset):
+    p_list = []  # A list of resulting posting
+    i = 0
+    j = 0
+    while i < len(x) and j < len(y):
+        if x[i].doc_id == y[j].doc_id:
+            posting = Posting(x[i].doc_id)
+            post1_idx = 0
+            post2_idx = 0
+            while post1_idx < len(x[i].positions) and post2_idx < len(y[j].positions):
+                if abs(y[j].positions[post2_idx] - x[i].positions[post1_idx]) <= offset:
+                    if abs(y[j].positions[post2_idx] - x[i].positions[post1_idx]) == offset:
+                        posting.positions.append(x[i].positions[post1_idx])
+                    post2_idx += 1
+                else:
+                    post1_idx += 1
+
+            while post1_idx < len(x[i].positions):
+                if abs(y[j].positions[-1] - x[i].positions[post1_idx]) == offset:
+                    posting.positions.append(x[i].positions[post1_idx])
+                post1_idx += 1
+            while post2_idx < len(y[j].positions):
+                if abs(y[j].positions[post2_idx] - x[i].positions[-1]) == offset:
+                    posting.positions.append(x[i].positions[-1])
+                post2_idx += 1
+
+            if posting.positions:
+                p_list.append(posting)
+
+            i += 1
+            j += 1
+
+        elif x[i].doc_id < y[j].doc_id:
+            i += 1
+        else:
+            j += 1
+
+    print("Merge phrase: ", p_list)
+    return p_list
+
+
 def merge_phraseliterals(x: [Posting], y: [Posting], difference):
     """
     Do pairwise positional merge of posting positions of x and y based on the phrase literal logic
@@ -79,6 +120,7 @@ def merge_phraseliterals(x: [Posting], y: [Posting], difference):
             positions_y = y[j].positions  # Index of positions of y
             k = 0
             l = 0
+
             while k < len(positions_x) and l < len(positions_y):
                 # check if the difference of the positions is what we are looking for
                 # TODO: Update this to just check if the difference is 1 or off by 1, may be no need to have this parameter
@@ -93,7 +135,7 @@ def merge_phraseliterals(x: [Posting], y: [Posting], difference):
                     # Do we need to check the next positions once we are matched?
                     k += 1
                     l += 1
-                # check if the positions are the same
+                    # check if the positions are the same
 
                     # # add the first ever document id to the list
                     # if len(merged_posting) == 0:

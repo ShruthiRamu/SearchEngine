@@ -22,15 +22,6 @@ class AndQuery(QueryComponent):
         mergedList = [Posting]
         merge_function = merge_posting
 
-        # You can use your own merge with reduce:
-        #
-        # from functools import reduce
-        #
-        # l = [[8, 10, 12], [4, 5, 9], [2, 11]]
-        #
-        # merged = reduce(merge, l)
-        # print(merged)
-        # # [2, 4, 5, 8, 9, 10, 11, 12]
         # "in new" - university + york
         posting1 = self.components[0].get_postings(index, token_processor)
         is_negative = self.components[0].is_negative
@@ -42,7 +33,7 @@ class AndQuery(QueryComponent):
             if is_negative:
                 # Swap the posting we passed to function
                 # Call not merge
-                print("Found a Not query: ")
+                #print("Found a Not query: ")
                 # for posting in second:
                 #     print(posting)
                 posting1 = merge_function.and_not_merge(posting2, posting1)
@@ -51,24 +42,8 @@ class AndQuery(QueryComponent):
                 posting1 = merge_function.and_not_merge(posting1, posting2)
 
             else:
-                # Regualr
+                # Regular
                 posting1 = merge_function.and_merge(posting1, posting2)
-
-
-
-
-            # if not is_negative:
-            #     first = posting1
-            #     second = posting2
-            #     posting1 = merge_function.and_merge(first, second)
-            # else:
-            #     first = posting2
-            #     second = posting1 # not posting
-            #     print("Found a Not query: ")
-            #     for posting in second:
-            #         print(posting)
-            #     posting1 = merge_function.and_not_merge(first, second)
-
 
 
         # for component in self.components:
@@ -96,7 +71,7 @@ class AndQuery(QueryComponent):
         # for result_posting in merged_list:
         #     print(result_posting)
 
-        #result = merged_list
+        # result = merged_list
         result = posting1
 
         # #  do pairwise intersection
@@ -105,7 +80,8 @@ class AndQuery(QueryComponent):
         #     second = componentPostings[1]
         #
         #
-        #     mergedList = merge_function.merge(first, second, 'and') # may be use whitespace or + for OR instead of the str
+        # mergedList = merge_function.merge(first, second, 'and') # may be use whitespace or + for OR instead of the
+        # str
         #
         #     i = 2  # continue with next index
         #

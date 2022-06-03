@@ -93,6 +93,7 @@ class BooleanQueryParser:
 
             # we reached to the end of query TODO: updated to handle the case when query is '"new york university"'
             #  where the last character is double quotes
+            # may be return empty object and handle it
             if length_out == 0:
                 return None
 

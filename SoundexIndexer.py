@@ -24,7 +24,6 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
             # Process each token.
             term = token_processor.process_token(token)
             index.add_term(term, d.id)
-
         # Author Processing
         author = d.get_author()
         if author:
@@ -38,10 +37,7 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
     return index, soundex_index
 
 
-def soundex_indexer(query:str, dir_name='mlb-articles-4000'):
-    corpus_path = Path(dir_name)
-    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
-    index, soundex_index = index_corpus(corpus)
+def soundex_indexer(query:str, index:Index, soundex_index:Index):
     print("\n==========================================================")
     encoding = get_encoding()
     code = soundex_code(query, encoding)

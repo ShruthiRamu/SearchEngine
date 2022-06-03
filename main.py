@@ -1,41 +1,83 @@
 from pathlib import Path
 
 from porter2stemmer import Porter2Stemmer
-from SoundexIndexer import soundex_indexer
+import SoundexIndexer
 from documents import DocumentCorpus, DirectoryCorpus
 from indexes import Index
 from indexes.positionalinvertedindex import PositionalInvertedIndex
 from queries import BooleanQueryParser
-from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
 from time import time_ns
+from text.newtokenprocessor import NewTokenProcessor
+
+mapping = {}
+
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
-    token_processor = BasicTokenProcessor()
+    token_processor = NewTokenProcessor()
+    # token_processor = BasicTokenProcessor()
     index = PositionalInvertedIndex()
     for d in corpus:
+        mapping[d.id] = d.get_file_name()
         stream = EnglishTokenStream(d.get_content())
         position = 1
         for token in stream:
-            term = token_processor.process_token(token)
-            index.add_term(term=term, position=position, doc_id=d.id)
+            terms = token_processor.process_token(token)
+            for term in terms:
+                index.add_term(term=term, position=position, doc_id=d.id)
             position += 1
     return index
 
+
 " Main Application of Search Engine "
+import numpy as np
 
 if __name__ == "__main__":
+    #neal_file = open("Neal_files.txt", "r")
+    #neal_files = np.array([new_file.rstrip() for new_file in neal_file.readlines()], dtype=object)
+    #ourfiles = []
 
     # Assuming in cwd
     # dir = input("Enter Directory Name: ")
     # Construct a path
-    corpus_path = Path()
-    corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
+    corpus_path = Path('all-nps-sites-extracted')
+
+    #corpus_path = Path('dummy')
+    #print(corpus_path)
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
 
     start = time_ns()
     index = index_corpus(corpus)
     end = time_ns()
     print(f"Building Index: {round(end-start, 2)} ns")
+
+    soundex_indexer_dir = 'mlb-articles-4000'
+    corpus_path = Path(soundex_indexer_dir)
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    start = time_ns()
+    i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
+    end = time_ns()
+    print(f"Building  Soundex Index: {round(end - start, 2)} ns")
+
+    # This is for debugging
+
+    # print("Postings for camp: ", index.get_postings("camp"))
+    # print("Postings for camp: ", index.get_postings("camping"))
+    # for posting in index.get_postings("camp"):
+    #     print(posting)
+    # print("Vocab for 2.json: ", index.vocabulary())
+    #
+    # print("BooleanQueryParser.....")
+    # token_processor = NewTokenProcessor()
+    # booleanqueryparser = BooleanQueryParser()
+    # # parse the given query and print the postings
+    # querycomponent = booleanqueryparser.parse_query(query='including the')
+    #
+    # postings = querycomponent.get_postings(index, token_processor=token_processor)
+    # for post in postings:
+    #     print(post)
+    #
+    # quit()
 
     while True:
         query = input("\nEnter Search Query: ")
@@ -45,6 +87,7 @@ if __name__ == "__main__":
             break
 
         # print the stemmed term
+        # TODO: Handle when string with space is provided
         elif query.startswith(":stem"):
             token = query.split(" ")[1]
             if not token:
@@ -83,14 +126,32 @@ if __name__ == "__main__":
             if not author:
                 print("No author specified")
                 continue
-            soundex_indexer(query=author) # INDEXING: Time Consuming
+            SoundexIndexer.soundex_indexer(query=author, index=i_index,
+                                           soundex_index=soundex_index)  # INDEXING: Time Consuming
 
         # Handle and parse the query
         else:
-            term = query
+            token_processor = NewTokenProcessor()
+            if len(query.split(" ")) == 2:
+                # Use the biword index
+                pass
+            else:
+                # Use the positional index
+                pass
+
             print(f"\nSearching the Term:{query}")
             booleanqueryparser = BooleanQueryParser()
             # parse the given query and print the postings
-            querycomponent = booleanqueryparser.parse_query(query=term)
-            for posting in querycomponent.get_postings(index, BasicTokenProcessor()):
+            querycomponent = booleanqueryparser.parse_query(query=query)
+
+            postings = querycomponent.get_postings(index, token_processor=token_processor)
+            for posting in postings:
                 print(posting)
+                # ourfiles.append(mapping[posting.doc_id])
+
+            # For debugging
+            # print("\nNeal Files: ")
+            # ourfiles = np.array(ourfiles, dtype=object)
+            # print(neal_files[np.where(neal_files != ourfiles)[0]])
+
+            print(f"Total Documents: {len(postings)}")

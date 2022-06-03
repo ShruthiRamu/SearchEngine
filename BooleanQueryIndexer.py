@@ -7,24 +7,37 @@ from indexes.positionalinvertedindex import PositionalInvertedIndex
 from queries import BooleanQueryParser
 from text.basictokenprocessor import BasicTokenProcessor
 from text.englishtokenstream import EnglishTokenStream
+from text.newtokenprocessor import NewTokenProcessor
 
 """This basic program builds a positional inverted index over the .txt files in 
 the same directory as this file."""
 
 def index_corpus(corpus: DocumentCorpus) -> Index:
-    token_processor = BasicTokenProcessor()
+    # token_processor = BasicTokenProcessor()
+    # index = PositionalInvertedIndex()
+    # # Iterate through the documents in the corpus:
+    # for d in corpus:
+    #     # Tokenize each document's content,
+    #     stream = EnglishTokenStream(d.get_content())
+    #     position = 1
+    #     print(f"\nDoc ID: {d.id}")
+    #     for token in stream:
+    #         # Process each token.
+    #         term = token_processor.process_token(token)
+    #         print(f"Term: {term}, Position: {position}")
+    #         index.add_term(term=term, position=position, doc_id=d.id)
+    #         position += 1
+    # return index
+    token_processor = NewTokenProcessor()
+    # token_processor = BasicTokenProcessor()
     index = PositionalInvertedIndex()
-    # Iterate through the documents in the corpus:
     for d in corpus:
-        # Tokenize each document's content,
         stream = EnglishTokenStream(d.get_content())
         position = 1
-        print(f"\nDoc ID: {d.id}")
         for token in stream:
-            # Process each token.
-            term = token_processor.process_token(token)
-            print(f"Term: {term}, Position: {position}")
-            index.add_term(term=term, position=position, doc_id=d.id)
+            terms = token_processor.process_token(token)
+            for term in terms:
+                index.add_term(term=term, position=position, doc_id=d.id)
             position += 1
     return index
 
@@ -57,16 +70,17 @@ if __name__ == "__main__":
 
     #term = '"new york" -science -debt'
 
-    term = '"new york" + university science'
+    term = '"new california"'
     print(f"\nTerm:{term}")
 
     booleanqueryparser = BooleanQueryParser()
     # parse the given query and print the postings
     querycomponent = booleanqueryparser.parse_query(query=term)
     print("Done with parsing the query, print the output \n")
-    for posting in querycomponent.get_postings(index, BasicTokenProcessor()):
-        print("In main.py: ")
-        print(posting)
+    postings_result = querycomponent.get_postings(index, NewTokenProcessor())
+    for posting in postings_result:
+        print("In main.py: ", posting.doc_id)
+
 
     # term = "new"
     # print(f"\nTerm:{term}")
