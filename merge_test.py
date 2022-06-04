@@ -9,31 +9,37 @@ class Posting:
             return f"(ID: {self.doc_id }, -> {[pos for pos in self.positions]})"
         return str(self.doc_id)
 
-def merge_phrase(x, y, offset):
-    p_list = []  # A list of resulting posting
-    i = 0
-    j = 0
-    while i < len(x) and j < len(y):
-        if x[i].doc_id == y[j].doc_id:
-            posting = Posting(x[i].doc_id)
-            post1_idx = 0
-            post2_idx = 0
-            while post1_idx < len(x[i].positions) and post2_idx < len(y[j].positions):
-                if abs(y[j].positions[post2_idx] - x[i].positions[post1_idx]) <= offset:
-                    if abs(y[j].positions[post2_idx] - x[i].positions[post1_idx]) == offset:
-                        posting.positions.append(x[i].positions[post1_idx])
-                    post2_idx += 1
-                else:
-                    post1_idx += 1
 
-            while post1_idx < len(x[i].positions):
-                if abs(y[j].positions[-1] - x[i].positions[post1_idx]) == offset:
-                    posting.positions.append(x[i].positions[post1_idx])
-                post1_idx += 1
-            while post2_idx < len(y[j].positions):
-                if abs(y[j].positions[post2_idx] - x[i].positions[-1]) == offset:
-                    posting.positions.append(x[i].positions[-1])
-                post2_idx += 1
+def merge_phrase(posting1, posting2, offset):
+    p_list = []  # A list of resulting posting
+    i = 0 # Posting 1 index
+    j = 0 # Posting 2 index
+
+    while i < len(posting1) and j < len(posting2):
+        if posting1[i].doc_id == posting2[j].doc_id:
+            posting = Posting(posting1[i].doc_id)
+            pos1_idx = 0 # Posting 1's position index
+            pos2_idx = 0 # Posting 2's position index
+            while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
+                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) != offset:
+                    # Move smaller pointer
+                    if posting1[i].positions[pos1_idx] < posting2[j].positions[pos2_idx]:
+                        pos1_idx += 1
+                    else:
+                        pos2_idx += 1
+                else:
+                    posting.positions.append(posting1[i].positions[pos1_idx])
+                    pos1_idx += 1
+                    pos2_idx += 1
+
+            while pos1_idx < len(posting1[i].positions):
+                if abs(posting2[j].positions[-1] - posting1[i].positions[pos1_idx]) == offset:
+                    posting.positions.append(posting1[i].positions[pos1_idx])
+                pos1_idx += 1
+            while pos2_idx < len(posting2[j].positions):
+                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[-1]) == offset:
+                    posting.positions.append(posting1[i].positions[-1])
+                pos2_idx += 1
 
             if posting.positions:
                 p_list.append(posting)
@@ -41,11 +47,10 @@ def merge_phrase(x, y, offset):
             i += 1
             j += 1
 
-        elif x[i].doc_id < y[j].doc_id:
+        elif posting1[i].doc_id < posting2[j].doc_id:
             i += 1
         else:
             j += 1
-
     return p_list
 
 
@@ -55,6 +60,9 @@ dictionary = {
     ],
     "dog": [
         Posting(2, [651, 999]),
+    ],
+    "win": [
+      Posting(8, [17])
     ],
     "god": [
         Posting(2, [4, 170, 652]), Posting(5, [9]), Posting(7, [18])
@@ -83,76 +91,68 @@ dictionary = {
     ],
 }
 
-query = 'dog god'
+query = 'angels fear to tread'
 component = query.split(" ")
 posting1 = dictionary[component[0]]
 for i, comp in enumerate(component[1:]):
   posting2 = dictionary[comp]
-  print('dog:')
-  for p in posting1:
-    print(p)
-  print('god:')
-  for p in posting2:
-    print(p)
   posting1 = merge_phrase(posting1, posting2, i+1)
 
 doc_ids = [p.doc_id for p in posting1]
 print(f"Query: {query}, Doc IDs:{doc_ids}")
 print('*'*80)
 
+query = 'dog god'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  posting1 = merge_phrase(posting1, posting2, i+1)
 
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print('*'*80)
 
-#
-# query = 'fools rush in'
-# component = query.split(" ")
-# posting1 = dictionary[component[0]]
-# for i, comp in enumerate(component[1:]):
-#   posting2 = dictionary[comp]
-#   posting1 = merge_phrase(posting1, posting2, i+1)
-#
-# doc_ids = [p.doc_id for p in posting1]
-# print(f"Query: {query}, Doc IDs:{doc_ids}")
-# print('*'*80)
-#
-# query = 'angels fear to tread'
-# component = query.split(" ")
-# posting1 = dictionary[component[0]]
-# for i, comp in enumerate(component[1:]):
-#   posting2 = dictionary[comp]
-#   posting1 = merge_phrase(posting1, posting2, i+1)
-#
-# doc_ids = [p.doc_id for p in posting1]
-# print(f"Query: {query}, Doc IDs:{doc_ids}")
-# print('*'*80)
-#
-# query = 'angels god'
-# component = query.split(" ")
-# posting1 = dictionary[component[0]]
-# for i, comp in enumerate(component[1:]):
-#   posting2 = dictionary[comp]
-#   posting1 = merge_phrase(posting1, posting2, i+1)
-#
-# doc_ids = [p.doc_id for p in posting1]
-# print(f"Query: {query}, Doc IDs:{doc_ids}")
-# print('*'*80)
-#
-# query = 'angels god buffoon'
-# component = query.split(" ")
-# posting1 = dictionary[component[0]]
-# for i, comp in enumerate(component[1:]):
-#   posting2 = dictionary[comp]
-#   posting1 = merge_phrase(posting1, posting2, i+1)
-#
-# doc_ids = [p.doc_id for p in posting1]
-# print(f"Query: {query}, Doc IDs:{doc_ids}")
-# print("*"*80)
+query = 'fools rush in'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  posting1 = merge_phrase(posting1, posting2, i+1)
 
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print('*'*80)
 
+query = 'angels god'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  posting1 = merge_phrase(posting1, posting2, i+1)
 
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print('*'*80)
 
+query = 'angels god buffoon'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  posting1 = merge_phrase(posting1, posting2, i+1)
 
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print("*"*80)
 
+query = 'angels win'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  posting1 = merge_phrase(posting1, posting2, i+1)
 
-
-
-
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print("*"*80)

@@ -30,7 +30,6 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
 
 
 " Main Application of Search Engine "
-import numpy as np
 
 if __name__ == "__main__":
     #neal_file = open("Neal_files.txt", "r")
@@ -51,13 +50,14 @@ if __name__ == "__main__":
     end = time_ns()
     print(f"Building Index: {round(end-start, 2)} ns")
 
-    soundex_indexer_dir = 'mlb-articles-4000'
-    corpus_path = Path(soundex_indexer_dir)
-    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
-    start = time_ns()
-    i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
-    end = time_ns()
-    print(f"Building  Soundex Index: {round(end - start, 2)} ns")
+    # # Building Soundex Index
+    # soundex_indexer_dir = 'mlb-articles-4000'
+    # corpus_path = Path(soundex_indexer_dir)
+    # corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    # start = time_ns()
+    # i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
+    # end = time_ns()
+    # print(f"Building  Soundex Index: {round(end - start, 2)} ns")
 
     # This is for debugging
 
