@@ -58,22 +58,29 @@ def merge(x: [Posting], y: [Posting], op: str):
 
     return merged_posting
 
-def merge_phrase(posting1:[Posting], posting2:[Posting], offset):
+
+def merge_phrase(posting1: [Posting], posting2: [Posting], offset):
     p_list = []  # A list of resulting posting
-    i = 0 # Posting 1 index
-    j = 0 # Posting 2 index
+    i = 0  # Posting 1 index
+    j = 0  # Posting 2 index
 
     while i < len(posting1) and j < len(posting2):
         if posting1[i].doc_id == posting2[j].doc_id:
             posting = Posting(posting1[i].doc_id)
-            pos1_idx = 0 # Posting 1's position index
-            pos2_idx = 0 # Posting 2's position index
+            pos1_idx = 0  # Posting 1's position index
+            pos2_idx = 0  # Posting 2's position index
             while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
                 if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) != offset:
                     # Move smaller pointer
+                    # [65,99]
+                    # [1,2,66]
                     if posting1[i].positions[pos1_idx] < posting2[j].positions[pos2_idx]:
                         pos1_idx += 1
+                    elif posting2[j].positions[pos2_idx] < posting1[i].positions[pos1_idx]:
+                        pos2_idx += 1
+                    # if they are equal
                     else:
+                        pos1_idx += 1
                         pos2_idx += 1
                 else:
                     posting.positions.append(posting1[i].positions[pos1_idx])
@@ -101,6 +108,42 @@ def merge_phrase(posting1:[Posting], posting2:[Posting], offset):
             j += 1
     return p_list
 
+
+def merge_phrase_textbook(x, y, offset):
+    answer = []  # A list of resulting posting
+    i = 0
+    j = 0
+    while i < len(x) and j < len(y):
+        if x[i].doc_id == y[j].doc_id:
+            l = []
+            posting = Posting(x[i].doc_id)
+            post1_idx = 0
+            post2_idx = 0
+            pp1 = x[i].positions  # positions of x
+            pp2 = y[j].positions  # positions of y
+            while post1_idx < len(x[i].positions):
+                while post2_idx < len(y[j].positions):
+                    if abs(pp1[post1_idx] - pp2[post2_idx]) <= offset:
+                        l.append(pp2[post2_idx])
+                    elif pp2[post2_idx] > pp1[post1_idx]:
+                        break
+                    post2_idx += 1
+                while l != [] and abs(l[0] - pp1[post1_idx]) > offset:
+                    l.remove(l[0])
+                for ps in l:
+                    posting.positions.append(pp1[post1_idx])
+                    posting.positions.append(ps)
+                    answer.append(posting)
+                post1_idx += 1
+            i += 1
+            j += 1
+
+        elif x[i].doc_id < y[j].doc_id:
+            i += 1
+        else:
+            j += 1
+
+    return answer
 
 
 # def merge_phrase(x: [Posting], y: [Posting], offset):

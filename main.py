@@ -50,14 +50,14 @@ if __name__ == "__main__":
     end = time_ns()
     print(f"Building Index: {round(end-start, 2)} ns")
 
-    # # Building Soundex Index
-    # soundex_indexer_dir = 'mlb-articles-4000'
-    # corpus_path = Path(soundex_indexer_dir)
-    # corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
-    # start = time_ns()
-    # i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
-    # end = time_ns()
-    # print(f"Building  Soundex Index: {round(end - start, 2)} ns")
+    # Building Soundex Index
+    soundex_indexer_dir = 'mlb-articles-4000'
+    corpus_path = Path(soundex_indexer_dir)
+    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    start = time_ns()
+    i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
+    end = time_ns()
+    print(f"Building  Soundex Index: {round(end - start, 2)} ns")
 
     # This is for debugging
 
@@ -145,8 +145,10 @@ if __name__ == "__main__":
             querycomponent = booleanqueryparser.parse_query(query=query)
 
             postings = querycomponent.get_postings(index, token_processor=token_processor)
-            for posting in postings:
-                print(posting)
+            doc_ids = [p.doc_id for p in postings]
+            doc_ids = list(set(doc_ids))
+
+
                 # ourfiles.append(mapping[posting.doc_id])
 
             # For debugging
@@ -154,4 +156,4 @@ if __name__ == "__main__":
             # ourfiles = np.array(ourfiles, dtype=object)
             # print(neal_files[np.where(neal_files != ourfiles)[0]])
 
-            print(f"Total Documents: {len(postings)}")
+            print(f"Total Documents: {len(doc_ids)}")

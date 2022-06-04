@@ -38,8 +38,18 @@ class PhraseLiteral(QueryComponent):
         for i in range(1, len(componentPostings)):
             # get the postings for each component
             posting2 = componentPostings[i]
-
+            # print("First posting: ")
+            # for post in posting1:
+            #     print(post)
+            # print("Second posting: ")
+            # for post in posting2:
+            #     print(post)
+            # print("------------------------------")
             posting1 = merge_function.merge_phrase(posting1, posting2, offset=i)
+
+        # doc_ids = [p.doc_id for p in posting1]
+        # print(f"Doc IDs:{doc_ids}")
+        # print('*' * 80)
 
         result = posting1
 

@@ -70,8 +70,10 @@ if __name__ == "__main__":
 
     #term = '"new york" -science -debt'
 
-    term = '"new california"'
+    term = '"new york university ranked best in new"'
     print(f"\nTerm:{term}")
+
+
 
     booleanqueryparser = BooleanQueryParser()
     # parse the given query and print the postings
