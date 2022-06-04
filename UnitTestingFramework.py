@@ -43,6 +43,15 @@ class TestSearchEngine(unittest.TestCase):
         self.corpus = DirectoryCorpus.load_text_directory(Path('utf_corpus'), ".txt")
         self.index = index_corpus(self.corpus)
 
+    def test_tokenizer(self):
+        self.assertEqual(self.token_processor.process_token("!ad'am''anTIn'e#")[0], "adamantin")
+
+    def test_tokenizer2(self):
+        self.assertListEqual(self.token_processor.process_token("Hewlett-Packard"), ['hewlettpackard', 'hewlett', 'packard'])
+
+    def test_tokenizer3(self):
+        self.assertListEqual(self.token_processor.process_token('-F""ree"-for-"all!'), ['freeforal', 'free', 'for', 'all'])
+
     def test_pii1(self):
         self.assertEqual(self.index.get_postings('high')[0].positions, self.petdict['high'][0][1])
 
@@ -56,39 +65,46 @@ class TestSearchEngine(unittest.TestCase):
         querycomponent = self.booleanqueryparser.parse_query(query='"pets should play"')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 1)
+
     def test_phrase2(self):
-        querycomponent = self.booleanqueryparser.parse_query(query='"pets should"')
+        querycomponent = self.booleanqueryparser.parse_query(query='"pets should run and jump and play"')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
-        self.assertTrue(len(postings) == 3)
+        self.assertTrue(len(postings) == 1)
+
     def test_and(self):
         querycomponent = self.booleanqueryparser.parse_query(query='pets should play')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 2)
+
     def test_and2(self):
         querycomponent = self.booleanqueryparser.parse_query(query='cat run')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 0)
+
     def test_or(self):
         querycomponent = self.booleanqueryparser.parse_query(query='cats + dog + pet')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 6)
+
     def test_or2(self):
         querycomponent = self.booleanqueryparser.parse_query(query='should + run + and')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 5)
+
     def test_not(self):
-        querycomponent = self.booleanqueryparser.parse_query(query='-cats')
+        querycomponent = self.booleanqueryparser.parse_query(query='pets -should')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
-        self.assertTrue(len(postings) == 4)
+        self.assertTrue(len(postings) == 1)
+
     def test_mix(self):
         querycomponent = self.booleanqueryparser.parse_query(query='should run + dogs')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
         self.assertTrue(len(postings) == 3)
+
     def test_mix2(self):
         querycomponent = self.booleanqueryparser.parse_query(query='cat + pets -dogs')
         postings = querycomponent.get_postings(self.index, token_processor=self.token_processor)
-        self.assertTrue(len(postings) == 4)
-
+        self.assertTrue(len(postings) == 5)
 
 
 if __name__ == '__main__':
