@@ -13,9 +13,9 @@ class NewTokenProcessor(TokenProcessor):
         new_token2 = ""
         hyphen = False
         all_tokens = []
-        if not new_token[0].isalnum():
+        while len(new_token) > 0 and not new_token[0].isalnum():
             new_token = new_token[1:]
-        if len(new_token) > 0 and not new_token[-1].isalnum():
+        while len(new_token) > 0 and not new_token[-1].isalnum():
             new_token = new_token[0:-1]
         for i in new_token:
             if i != self.whitespace_re and i != "'" and i != '"':
@@ -25,8 +25,10 @@ class NewTokenProcessor(TokenProcessor):
         if hyphen:
             all_tokens.append(re.sub("-", "", new_token2))
             all_tokens = all_tokens + new_token2.split("-")
+
+            for i in range(1, len(all_tokens)):
+                all_tokens[i] = stemmer.stem(all_tokens[i])
         else:
             all_tokens.append(new_token2)
-        for i in range(len(all_tokens)):
-            all_tokens[i] = stemmer.stem(all_tokens[i])
+            all_tokens[0] = stemmer.stem(all_tokens[0])
         return all_tokens
