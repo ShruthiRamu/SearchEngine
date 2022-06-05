@@ -1,6 +1,7 @@
 from typing import List, Iterable
 
 import merge_posting
+from indexes.invertedindex import InvertedIndex
 from indexes.postings import Posting
 from text import TokenProcessor
 from . import TermLiteral
@@ -27,8 +28,21 @@ class PhraseLiteral(QueryComponent):
         mergedList = [Posting]
         merge_function = merge_posting
 
+        # Handle if biword index
+        if isinstance(index, InvertedIndex) and len(self.terms) == 2:
+            #  print("Got biword inside phraseliteral.py: ", self.terms)
+            # Assuming the first term the token processor always returns the pair value
+            first_tokenized_terms = token_processor.process_token(self.terms[0])
+            second_tokenized_terms = token_processor.process_token(self.terms[1])
+            tokenized_query_term_1 = first_tokenized_terms[0] # Because
+            tokenized_query_term_2 = second_tokenized_terms[0]
+            biword_term = tokenized_query_term_1 + ' ' + tokenized_query_term_2
+            posting = index.get_postings(biword_term)
+            return list(posting)
+
+        # Handle longer phrase queries
         for term in self.terms:
-            print("Term: ", term)
+            #print("Term: ", term)
             term_literal = TermLiteral(term, False)
             posting = term_literal.get_postings(index, token_processor=token_processor)
             # posting = index.get_postings(term=term)
