@@ -80,6 +80,7 @@ def pairwise(iterable):
 if __name__ == "__main__":
 
     # Building Soundex Index
+    print("Soundex Indexing...")
     soundex_indexer_dir = 'mlb-articles-4000'
     corpus_path = Path(soundex_indexer_dir)
     soundex_corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
@@ -96,9 +97,10 @@ if __name__ == "__main__":
             while True:
                 # Assuming in cwd
                 dir = input("Enter Directory Name: ") if program_start else query
-                if dir.startswith(":index"):
-                    _, dir_name = dir.split(" ")
-                    corpus_path = Path(dir_name.rstrip())
+                if program_start or dir.startswith(":index"):
+                    if dir.startswith(":index"):
+                        _, dir = dir.split(" ")
+                    corpus_path = Path(dir.rstrip())
                     if corpus_path.is_dir():
                         if any(f.endswith('.txt') for f in os.listdir(corpus_path)):
                             corpus = DirectoryCorpus.load_text_directory(corpus_path, '.txt')
@@ -108,6 +110,7 @@ if __name__ == "__main__":
                     else:
                         print("Directory doesn't exist\n")
 
+            print("Indexing...")
             program_start = False
             start = time_ns()
             positional_index, biword_index = index_corpus(corpus)
@@ -204,5 +207,7 @@ if __name__ == "__main__":
                         for c in doc_content:
                             print(c)
                         break
-                    else:
+                    elif doc_num:
                         print("Enter a valid document number")
+                    else:
+                        break # Skip the viewing of content
