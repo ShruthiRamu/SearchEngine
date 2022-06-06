@@ -67,3 +67,12 @@ class DirectoryCorpus:
                             lambda f: f.suffix == extension,
                             factories={extension: jsonfiledocument.JsonFileDocument.load_from})
         return c
+
+    def load_json_text_directory(path) -> List['DirectoryCorpus']:
+        t = DirectoryCorpus(path,
+                            lambda f: f.suffix == ".txt",
+                            factories={".txt": textfiledocument.TextFileDocument.load_from})
+        j = DirectoryCorpus(path,
+                            lambda f: f.suffix == ".json",
+                            factories={".json": jsonfiledocument.JsonFileDocument.load_from})
+        return [t, j]

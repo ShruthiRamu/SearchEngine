@@ -84,9 +84,26 @@ if __name__ == "__main__":
     # Assuming in cwd
     # dir = input("Enter Directory Name: ")
     # Construct a path
-    corpus_path = Path('all-nps-sites-extracted')
+    while True:
+        path_input = input("Enter directory name: ")
+        if Path(path_input).exists():
+            break
+        else:
+            print("Enter valid path")
 
-    corpus_nps = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    corpus_path = Path(path_input)
+
+    #corpus_nps = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+
+    corpus_nps = DirectoryCorpus.load_json_text_directory(corpus_path)
+
+    #Detect whether text or json corpus
+    is_json = False
+    if len(corpus_nps[0]) == 0:
+        corpus_nps = corpus_nps[1]
+        is_json = True
+    else:
+        corpus_nps = corpus_nps[0]
 
     start = time_ns()
     # index = index_corpus(corpus_nps)
@@ -130,9 +147,15 @@ if __name__ == "__main__":
                 continue
             corpus_path = Path(directory_name)
             # TODO: Based on the directory set the file extension and call the load directory accordingly
-            corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+            corpus_nps = DirectoryCorpus.load_json_text_directory(corpus_path)
+            if len(corpus_nps[0]) == 0:
+                corpus_nps = corpus_nps[1]
+                is_json = True
+            else:
+                corpus_nps = corpus_nps[0]
+                is_json = False
             # index = index_corpus(corpus)
-            positional_index, biword_index = index_corpus(corpus)
+            positional_index, biword_index = index_corpus(corpus_nps)
 
         #  print the vocabulary
         elif query.startswith(":vocab"):
@@ -179,10 +202,13 @@ if __name__ == "__main__":
             doc_ids = list(set(doc_ids))
 
             # Get all the file names
-            file_names = [corpus_nps.get_document(posting.doc_id).get_file_name() for posting in postings]
-
-            for posting in postings:
-                print(f"Document Title : {corpus_nps.get_document(posting.doc_id).title}")
+            if is_json:
+                file_names = [corpus_nps.get_document(posting.doc_id).get_file_name() for posting in postings]
+                for posting in postings:
+                    print(f"Document Title : {corpus_nps.get_document(posting.doc_id).title}")
+            else:
+                for posting in postings:
+                    print(posting)
 
             # print("Printing doc ids: \n")
             # print(doc_ids)
