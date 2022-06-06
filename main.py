@@ -80,13 +80,13 @@ def pairwise(iterable):
 if __name__ == "__main__":
 
     # Building Soundex Index
-    # soundex_indexer_dir = 'mlb-articles-4000'
-    # corpus_path = Path(soundex_indexer_dir)
-    # soundex_corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
-    # start = time_ns()
-    # i_index, soundex_index = SoundexIndexer.index_corpus(soundex_corpus)
-    # end = time_ns()
-    # print(f"Soundex Indexing Time: {(end - start)/1e+9} secs\n")
+    soundex_indexer_dir = 'mlb-articles-4000'
+    corpus_path = Path(soundex_indexer_dir)
+    soundex_corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    start = time_ns()
+    i_index, soundex_index = SoundexIndexer.index_corpus(soundex_corpus)
+    end = time_ns()
+    print(f"Soundex Indexing Time: {(end - start)/1e+9} secs\n")
 
     program_start = True
     while True:
@@ -151,8 +151,23 @@ if __name__ == "__main__":
             if not author:
                 print("No author specified")
                 continue
-            SoundexIndexer.soundex_indexer(query=author, index=i_index,
-                                           soundex_index=soundex_index)  # INDEXING: Time Consuming
+            authors = SoundexIndexer.soundex_indexer(query=author, index=i_index,
+                                           soundex_index=soundex_index)
+            if authors:
+                for author in authors:
+                    postings = i_index.get_postings(author)
+                    print(f"Author: {author.capitalize()}, Total Documents Found: {len(postings)}")
+
+                author_name = input("Enter author name(or 'type skip') from database to view title:")
+                if author_name != 'skip':
+                    postings = i_index.get_postings(author_name)
+                    print("-"*50)
+                    print(f"Author: {author_name.capitalize()}")
+                    for i, posting in enumerate(postings):
+                        print(f"[{i + 1}] {soundex_corpus.get_document(posting.doc_id).title}")
+            else:
+                print("No author matches found")
+
 
         # Handle and parse the query
         else:
@@ -179,14 +194,15 @@ if __name__ == "__main__":
                 print(f"[{i+1}] {corpus.get_document(doc_id).title}")
             print(f"Total Documents: {num_docs}")
 
-            print("\nEnter Document Number(or 0) to view(or skip) content:")
-            while True:
-                doc_num = int(input("Doc No: "))
-                if 0 < doc_num <= num_docs:
-                    print(f"Document {doc_num} Content:")
-                    doc_content = corpus.get_document(doc_ids[doc_num-1]).get_content()
-                    for c in doc_content:
-                        print(c)
-                    break
-                else:
-                    print("Enter a valid document number")
+            if num_docs:
+                print("\nEnter Document Number(or 0) to view(or skip) content:")
+                while True:
+                    doc_num = int(input("Doc No: "))
+                    if 0 < doc_num <= num_docs:
+                        print(f"Document {doc_num} Content:")
+                        doc_content = corpus.get_document(doc_ids[doc_num-1]).get_content()
+                        for c in doc_content:
+                            print(c)
+                        break
+                    else:
+                        print("Enter a valid document number")
