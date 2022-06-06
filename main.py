@@ -1,6 +1,6 @@
 from itertools import tee
 from pathlib import Path
-
+import os
 import cardinality
 from porter2stemmer import Porter2Stemmer
 import SoundexIndexer
@@ -31,9 +31,7 @@ from text.newtokenprocessor import NewTokenProcessor
 def index_corpus(corpus: DocumentCorpus):
 
     token_processor = NewTokenProcessor()
-
     positional_index = PositionalInvertedIndex()
-
     biword_index = InvertedIndex()
 
     for d in corpus:
@@ -81,50 +79,43 @@ def pairwise(iterable):
 
 if __name__ == "__main__":
 
-    # Assuming in cwd
-    # dir = input("Enter Directory Name: ")
-    # Construct a path
-    while True:
-        path_input = input("Enter directory name: ")
-        if Path(path_input).exists():
-            break
-        else:
-            print("Enter valid path")
-
-    corpus_path = Path(path_input)
-
-    #corpus_nps = DirectoryCorpus.load_json_directory(corpus_path, ".json")
-
-    corpus_nps = DirectoryCorpus.load_json_text_directory(corpus_path)
-
-    #Detect whether text or json corpus
-    is_json = False
-    if len(corpus_nps[0]) == 0:
-        corpus_nps = corpus_nps[1]
-        is_json = True
-    else:
-        corpus_nps = corpus_nps[0]
-
-    start = time_ns()
-    # index = index_corpus(corpus_nps)
-    positional_index, biword_index = index_corpus(corpus_nps)
-    end = time_ns()
-    print(f"Building Index: {round(end - start, 2)} ns")
-
     # Building Soundex Index
     soundex_indexer_dir = 'mlb-articles-4000'
     corpus_path = Path(soundex_indexer_dir)
-    corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
+    soundex_corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
     start = time_ns()
-    i_index, soundex_index = SoundexIndexer.index_corpus(corpus)
+    i_index, soundex_index = SoundexIndexer.index_corpus(soundex_corpus)
     end = time_ns()
-    print(f"Building  Soundex Index: {round(end - start, 2)} ns")
+    print(f"Soundex Indexing Time: {(end - start)/1e+9} secs\n")
 
+    program_start = True
     while True:
-        query = input("\nEnter Search Query: ")
+        query = "" if program_start else input("\nEnter Search Query: ")
+        #  index the specified folder
+        if program_start or query.startswith(":index"):
+            while True:
+                # Assuming in cwd
+                dir = input("Enter Directory Name: ") if program_start else query
+                if dir.startswith(":index"):
+                    _, dir_name = dir.split(" ")
+                    corpus_path = Path(dir_name.rstrip())
+                    if corpus_path.is_dir():
+                        if any(f.endswith('.txt') for f in os.listdir(corpus_path)):
+                            corpus = DirectoryCorpus.load_text_directory(corpus_path, '.txt')
+                        elif any(f.endswith('.json') for f in os.listdir(corpus_path)):
+                            corpus = DirectoryCorpus.load_json_directory(corpus_path, '.json')
+                        break
+                    else:
+                        print("Directory doesn't exist\n")
 
-        if query.startswith(":q"):
-            print("\nQuitting the program....")
+            program_start = False
+            start = time_ns()
+            positional_index, biword_index = index_corpus(corpus)
+            end = time_ns()
+            print(f"Positional & Biword Indexing Time: {(end - start)/1e+9} secs\n")
+
+        elif query.startswith(":q"):
+            print("Quitting the program....")
             break
 
         # print the stemmed term
@@ -138,24 +129,6 @@ if __name__ == "__main__":
             for token in tokens:
                 stemmed_terms.append(stemmer.stem(token))
             print("\nStemmed term(s): ", stemmed_terms)
-
-        #  index the specified folder
-        elif query.startswith(":index"):
-            directory_name = query.split(" ")[1]
-            if not directory_name:
-                print("No directory name specified")
-                continue
-            corpus_path = Path(directory_name)
-            # TODO: Based on the directory set the file extension and call the load directory accordingly
-            corpus_nps = DirectoryCorpus.load_json_text_directory(corpus_path)
-            if len(corpus_nps[0]) == 0:
-                corpus_nps = corpus_nps[1]
-                is_json = True
-            else:
-                corpus_nps = corpus_nps[0]
-                is_json = False
-            # index = index_corpus(corpus)
-            positional_index, biword_index = index_corpus(corpus_nps)
 
         #  print the vocabulary
         elif query.startswith(":vocab"):
@@ -178,8 +151,23 @@ if __name__ == "__main__":
             if not author:
                 print("No author specified")
                 continue
-            SoundexIndexer.soundex_indexer(query=author, index=i_index,
-                                           soundex_index=soundex_index)  # INDEXING: Time Consuming
+            authors = SoundexIndexer.soundex_indexer(query=author, index=i_index,
+                                           soundex_index=soundex_index)
+            if authors:
+                for author in authors:
+                    postings = i_index.get_postings(author)
+                    print(f"Author: {author.capitalize()}, Total Documents Found: {len(postings)}")
+
+                author_name = input("Enter author name(or 'type skip') from database to view title:")
+                if author_name != 'skip':
+                    postings = i_index.get_postings(author_name)
+                    print("-"*50)
+                    print(f"Author: {author_name.capitalize()}")
+                    for i, posting in enumerate(postings):
+                        print(f"[{i + 1}] {soundex_corpus.get_document(posting.doc_id).title}")
+            else:
+                print("No author matches found")
+
 
         # Handle and parse the query
         else:
@@ -200,20 +188,21 @@ if __name__ == "__main__":
             # Get all the doc ids
             doc_ids = [p.doc_id for p in postings]
             doc_ids = list(set(doc_ids))
+            num_docs = len(doc_ids)
 
-            # Get all the file names
-            if is_json:
-                file_names = [corpus_nps.get_document(posting.doc_id).get_file_name() for posting in postings]
-                for posting in postings:
-                    print(f"Document Title : {corpus_nps.get_document(posting.doc_id).title}")
-            else:
-                for posting in postings:
-                    print(posting)
+            for i, doc_id in enumerate(doc_ids):
+                print(f"[{i+1}] {corpus.get_document(doc_id).title}")
+            print(f"Total Documents: {num_docs}")
 
-            # print("Printing doc ids: \n")
-            # print(doc_ids)
-
-            # print("Printing File names: \n")
-            # print(file_names)
-
-            print(f"Total Documents: {len(doc_ids)}")
+            if num_docs:
+                print("\nEnter Document Number(or 0) to view(or skip) content:")
+                while True:
+                    doc_num = int(input("Doc No: "))
+                    if 0 < doc_num <= num_docs:
+                        print(f"Document {doc_num} Content:")
+                        doc_content = corpus.get_document(doc_ids[doc_num-1]).get_content()
+                        for c in doc_content:
+                            print(c)
+                        break
+                    else:
+                        print("Enter a valid document number")

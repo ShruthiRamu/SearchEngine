@@ -38,18 +38,11 @@ def index_corpus(corpus: DocumentCorpus) -> Index:
 
 
 def soundex_indexer(query:str, index:Index, soundex_index:Index):
-    print("\n==========================================================")
+    print("==========================================================")
     encoding = get_encoding()
     code = soundex_code(query, encoding)
     authors = soundex_index.get_postings(code)
-    if authors:
-        for author in authors:
-            postings = index.get_postings(author)
-            doc_ids = [posting.doc_id for posting in postings]
-            print(f"Author: {author.capitalize()} => Document(s): {doc_ids}")
-    else:
-        print("No author matches found")
-
+    return authors
 
 if __name__ == "__main__":
     corpus_path = Path.cwd() / 'mlb-articles-small'
