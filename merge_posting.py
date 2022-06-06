@@ -253,6 +253,57 @@ def merge_phraseliterals(x: [Posting], y: [Posting], difference):
     return merged_posting
 
 
+def near_k_merge(posting1: [Posting], posting2: [Posting], k):
+    merged_postings = []
+    i = 0  # index for posting 1
+    j = 0  # index for posting 2
+
+    while i < len(posting1) and j < len(posting2):
+        if posting1[i].doc_id == posting2[j].doc_id:
+            posting = Posting(posting1[i].doc_id)
+            pos1_idx = 0  # Posting 1's position index
+            pos2_idx = 0  # Posting 2's position index
+            while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
+                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) > k:
+                    # Move smaller pointer
+                    if posting1[i].positions[pos1_idx] < posting2[j].positions[pos2_idx]:
+                        pos1_idx += 1
+                    elif posting2[j].positions[pos2_idx] < posting1[i].positions[pos1_idx]:
+                        pos2_idx += 1
+                    # if they are equal
+                    else:
+                        pos1_idx += 1
+                        pos2_idx += 1
+                else:
+                    #posting.positions.append(posting1[i].positions[pos1_idx])  # <=k
+                    posting.positions.append(posting2[j].positions[pos2_idx])
+                    pos1_idx += 1
+                    pos2_idx += 1
+
+            while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
+                if abs(posting2[j].positions[-1] - posting1[i].positions[pos1_idx]) <= k:
+                    #posting.positions.append(posting1[i].positions[pos1_idx])
+                    posting.positions.append(posting2[j].positions[pos2_idx])
+                pos1_idx += 1
+            while pos2_idx < len(posting2[j].positions):
+                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[-1]) <= k:
+                    #posting.positions.append(posting1[i].positions[-1])
+                    posting.positions.append(posting2[j].positions[pos2_idx])
+                pos2_idx += 1
+
+            if posting.positions:
+                merged_postings.append(posting)
+
+            i += 1
+            j += 1
+
+        elif posting1[i].doc_id < posting2[j].doc_id:
+            i += 1
+        else:
+            j += 1
+    return merged_postings
+
+
 def and_merge(x: [Posting], y: [Posting]):
     i = 0  # Index of x
     j = 0  # Index of y

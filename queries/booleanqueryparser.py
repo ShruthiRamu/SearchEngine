@@ -1,4 +1,5 @@
 from . import AndQuery, OrQuery, QueryComponent, TermLiteral, PhraseLiteral
+from .nearliteral import NearLiteral
 from .notquery import NotQuery
 
 
@@ -64,8 +65,7 @@ class BooleanQueryParser:
         # Skip past white space.
         while subquery[start_index] == ' ':
             start_index += 1
-
-        # TODO: handle '-' Not queries here and set the query component is_negative as true for it
+        # Handle not query
         if subquery[start_index] == '-':
             #  is_negative_component = True
 
@@ -78,6 +78,20 @@ class BooleanQueryParser:
             return BooleanQueryParser._Literal(
                 BooleanQueryParser._StringBounds(start_index + 1, not_query_literal_length),
                 NotQuery(not_query_literal.literal_component, is_negative=True))
+        # Handle Near operator
+        if subquery[start_index] == '[':
+            # skip the opening square bracket
+            start_index += 1
+            # locate the next closed square bracket ']'
+            next_bracket = subquery.find(']', start_index)
+            if next_bracket < 0:
+                # No more literals in this subquery.
+                length_out = sub_length - start_index
+            else:
+                length_out = next_bracket - start_index
+            return BooleanQueryParser._Literal(
+                BooleanQueryParser._StringBounds(start_index, length_out + 1),
+                NearLiteral(subquery[start_index:start_index + length_out], is_negative=False))
 
         # check if the first non-space character is a double-quote (")
         if subquery[start_index] == '"':

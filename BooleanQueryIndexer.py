@@ -110,10 +110,16 @@ if __name__ == "__main__":
 
     # term = '"new york university ranked best in new"'
     # term = '"learn about the Park"'
-    term = ':q park'
+    # term = ':q park'
+
+    # Learn About the Park
+    # term = '[learn NEAR/2 the NEAR/2 photos]' #  1.json and 10.json
+    # term = '[signs NEAR/2 be]'  # 4.json
+    # term = '[explore NEAR/2 park NEAR/3 involved]'
+    term = '[Coral near/4 Products] + "learn about the park"'
     print(f"\nTerm:{term}")
 
-    print(term.split()[1:])
+    # print(term.split()[1:])
 
     booleanqueryparser = BooleanQueryParser()
     # parse the given query and print the postings
