@@ -26,7 +26,7 @@ class NewTokenProcessor(TokenProcessor):
             all_tokens.append(re.sub("-", "", new_token2))
             all_tokens = all_tokens + new_token2.split("-")
 
-            for i in range(1, len(all_tokens)):
+            for i in range(0, len(all_tokens)):
                 all_tokens[i] = stemmer.stem(all_tokens[i])
         else:
             all_tokens.append(new_token2)
