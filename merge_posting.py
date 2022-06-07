@@ -70,7 +70,7 @@ def merge_phrase(posting1: [Posting], posting2: [Posting], offset):
             pos1_idx = 0  # Posting 1's position index
             pos2_idx = 0  # Posting 2's position index
             while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) != offset:
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx] != offset:
                     # Move smaller pointer
                     # [65,99]
                     # [1,2,66]
@@ -88,11 +88,11 @@ def merge_phrase(posting1: [Posting], posting2: [Posting], offset):
                     pos2_idx += 1
 
             while pos1_idx < len(posting1[i].positions):
-                if abs(posting2[j].positions[-1] - posting1[i].positions[pos1_idx]) == offset:
+                if posting2[j].positions[-1] - posting1[i].positions[pos1_idx] == offset:
                     posting.positions.append(posting1[i].positions[pos1_idx])
                 pos1_idx += 1
             while pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[-1]) == offset:
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[-1] == offset:
                     posting.positions.append(posting1[i].positions[-1])
                 pos2_idx += 1
 
@@ -264,7 +264,7 @@ def near_k_merge(posting1: [Posting], posting2: [Posting], k):
             pos1_idx = 0  # Posting 1's position index
             pos2_idx = 0  # Posting 2's position index
             while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) > k:
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx] != k:
                     # Move smaller pointer
                     if posting1[i].positions[pos1_idx] < posting2[j].positions[pos2_idx]:
                         pos1_idx += 1
@@ -281,12 +281,12 @@ def near_k_merge(posting1: [Posting], posting2: [Posting], k):
                     pos2_idx += 1
 
             while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[-1] - posting1[i].positions[pos1_idx]) <= k:
+                if posting2[j].positions[-1] - posting1[i].positions[pos1_idx] <= k:
                     #posting.positions.append(posting1[i].positions[pos1_idx])
                     posting.positions.append(posting2[j].positions[pos2_idx])
                 pos1_idx += 1
             while pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[-1]) <= k:
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[-1] <= k:
                     #posting.positions.append(posting1[i].positions[-1])
                     posting.positions.append(posting2[j].positions[pos2_idx])
                 pos2_idx += 1

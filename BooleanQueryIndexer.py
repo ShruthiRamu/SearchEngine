@@ -81,7 +81,7 @@ def pairwise(iterable):
 
 
 if __name__ == "__main__":
-    corpus_path = Path('all-nps-sites-extracted-small')
+    corpus_path = Path('dummyjsonfiles')
     # corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
     corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
 
@@ -113,10 +113,10 @@ if __name__ == "__main__":
     # term = ':q park'
 
     # Learn About the Park
-    # term = '[learn NEAR/2 the NEAR/2 photos]' #  1.json and 10.json
+   # term = '[learn NEAR/2 the NEAR/2 photos]' #  1.json and 10.json
     # term = '[signs NEAR/2 be]'  # 4.json
     # term = '[explore NEAR/2 park NEAR/3 involved]'
-    term = '[Coral near/4 Products] + "learn about the park"'
+    term = '[Coral near/4 Products]'
     print(f"\nTerm:{term}")
 
     # print(term.split()[1:])
