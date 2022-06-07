@@ -10,7 +10,7 @@ class Posting:
         return str(self.doc_id)
 
 
-def merge_phrase_original(posting1: [Posting], posting2: [Posting], offset):
+def merge_phrase(posting1: [Posting], posting2: [Posting], offset):
     p_list = []  # A list of resulting posting
     i = 0  # Posting 1 index
     j = 0  # Posting 2 index
@@ -21,7 +21,7 @@ def merge_phrase_original(posting1: [Posting], posting2: [Posting], offset):
             pos1_idx = 0  # Posting 1's position index
             pos2_idx = 0  # Posting 2's position index
             while pos1_idx < len(posting1[i].positions) and pos2_idx < len(posting2[j].positions):
-                if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx]) != offset:
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[pos1_idx] != offset:
                     # Move smaller pointer
                     # [65,99]
                     # [1,2,66]
@@ -29,8 +29,7 @@ def merge_phrase_original(posting1: [Posting], posting2: [Posting], offset):
                         pos1_idx += 1
                     elif posting2[j].positions[pos2_idx] < posting1[i].positions[pos1_idx]:
                         pos2_idx += 1
-                    # if they are
-
+                    # if they are equal
                     else:
                         pos1_idx += 1
                         pos2_idx += 1
@@ -39,14 +38,14 @@ def merge_phrase_original(posting1: [Posting], posting2: [Posting], offset):
                     pos1_idx += 1
                     pos2_idx += 1
 
-            # while pos1_idx < len(posting1[i].positions):
-            #     if abs(posting2[j].positions[-1] - posting1[i].positions[pos1_idx]) == offset:
-            #         posting.positions.append(posting1[i].positions[pos1_idx])
-            #     pos1_idx += 1
-            # while pos2_idx < len(posting2[j].positions):
-            #     if abs(posting2[j].positions[pos2_idx] - posting1[i].positions[-1]) == offset:
-            #         posting.positions.append(posting1[i].positions[-1])
-            #     pos2_idx += 1
+            while pos1_idx < len(posting1[i].positions):
+                if posting2[j].positions[-1] - posting1[i].positions[pos1_idx] == offset:
+                    posting.positions.append(posting1[i].positions[pos1_idx])
+                pos1_idx += 1
+            while pos2_idx < len(posting2[j].positions):
+                if posting2[j].positions[pos2_idx] - posting1[i].positions[-1] == offset:
+                    posting.positions.append(posting1[i].positions[-1])
+                pos2_idx += 1
 
             if posting.positions:
                 p_list.append(posting)
@@ -60,7 +59,7 @@ def merge_phrase_original(posting1: [Posting], posting2: [Posting], offset):
             j += 1
     return p_list
 
-def merge_phrase(x, y, offset):
+def merge_phrase_textbook(x, y, offset):
     answer = []  # A list of resulting posting
     i = 0
     j = 0
@@ -140,15 +139,17 @@ def merge_phrase(x, y, offset):
 #     return p_list
 
 
+
+
 dictionary = {
     "angels": [
-        Posting(2, [36, 174, 252, 651]), Posting(4, [12, 22, 102, 432]), Posting(7, [17])
+        Posting(2, [36, 174, 252, 651]), Posting(4, [12, 22, 102, 432]), Posting(7, [17]), Posting(9, [1, 3])
     ],
     "dog": [
-        Posting(2, [651, 999]),
+        Posting(2, [999]),
     ],
     "win": [
-      Posting(2, [651]), Posting(8, [17])
+      Posting(2, [652]), Posting(8, [17])
     ],
     "god": [
         Posting(2, [4, 170, 652]), Posting(5, [9]), Posting(7, [18])
@@ -161,7 +162,7 @@ dictionary = {
         Posting(2, [1, 17, 74, 222]), Posting(4, [8, 78, 108, 458]), Posting(7, [3, 13, 23, 193])
     ],
     "fear": [
-        Posting(2, [87, 704, 722, 901]), Posting(4, [13, 43, 113, 433]), Posting(7, [18, 328, 528])
+        Posting(2, [87, 704, 722, 901]), Posting(4, [13, 43, 113, 433]), Posting(7, [18, 328, 528]), Posting(9, [2])
     ],
     "in": [
         Posting(2, [3, 37, 76, 444, 851]), Posting(4, [10, 20, 110, 470, 500]), Posting(7, [5, 15, 25, 195])
@@ -175,7 +176,28 @@ dictionary = {
     "tread": [
         Posting(2, [57, 94, 333]), Posting(4, [15, 35, 155]), Posting(7, [20, 320])
     ],
+    "computers":[Posting(10, [1, 4, 5])],
+    "there": [Posting(10, [2])],
+    "no": [Posting(10, [3])],
 }
+
+query = 'computers there no computers computers'
+component = query.split(" ")
+posting1 = dictionary[component[0]]
+for i, comp in enumerate(component[1:]):
+  posting2 = dictionary[comp]
+  # print("Posting 1")
+  # for p in posting1:
+  #     print(p)
+  # print("Posting 2")
+  # for p in posting2:
+  #     print(p)
+  posting1 = merge_phrase(posting1, posting2, i+1)
+
+doc_ids = [p.doc_id for p in posting1]
+print(f"Query: {query}, Doc IDs:{doc_ids}")
+print('*'*80)
+
 
 query = 'dog win'
 component = query.split(" ")
