@@ -1,12 +1,13 @@
 from typing import List
 
-import merge_posting
 from indexes import Index, Posting
 from queries import QueryComponent
 from text import TokenProcessor
 
 
 class NotQuery(QueryComponent):
+    """NotQuery objects are negative (all others are positive), and the AndQuery is programmed to do an
+    "AND NOT" merge if one of its child components is a negative query. """
     def __init__(self, component: QueryComponent):
         self.component = component  # just a single component
 

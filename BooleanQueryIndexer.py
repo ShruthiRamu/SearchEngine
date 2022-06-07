@@ -116,7 +116,8 @@ if __name__ == "__main__":
    # term = '[learn NEAR/2 the NEAR/2 photos]' #  1.json and 10.json
     # term = '[signs NEAR/2 be]'  # 4.json
     # term = '[explore NEAR/2 park NEAR/3 involved]'
-    term = '[Coral near/4 Products]'
+    #term = '[Coral near/4 Products]'
+    term = 'pick-up'
     print(f"\nTerm:{term}")
 
     # print(term.split()[1:])

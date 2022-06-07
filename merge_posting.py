@@ -60,6 +60,10 @@ def merge(x: [Posting], y: [Posting], op: str):
 
 
 def merge_phrase(posting1: [Posting], posting2: [Posting], offset):
+    """
+    Do pairwise positional merge of posting positions of x and y based on the phrase literal logic
+    Assume x & y sorted.
+    """
     p_list = []  # A list of resulting posting
     i = 0  # Posting 1 index
     j = 0  # Posting 2 index

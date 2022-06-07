@@ -9,14 +9,15 @@ from .querycomponent import QueryComponent
 
 class NearLiteral(QueryComponent):
     """
-    Represents a phrase literal consisting of one or more terms that must occur in sequence.
+    Represents a near literal consisting of one or more terms that must occur in sequence. Given a value k,
+    this does a positional merge between the terms to the left and right of the NEAR operator, selecting documents
+    where the second term appears at most k positions away from the first term.
     """
 
     def __init__(self, terms: List[str], is_negative: bool):
         self.terms = [s for s in terms]
         self.is_negative = is_negative
 
-    # added this to handle single phrase with terms separated by whitespace
     def __init__(self, term: str, is_negative: bool):
         self.terms = term.split(" ")
         self.first_token = self.terms[0]
@@ -32,39 +33,6 @@ class NearLiteral(QueryComponent):
         second_token_postings = TermLiteral(self.second_token, False).get_postings(index=index, token_processor=token_processor)
 
         postings = merge_function.near_k_merge(first_token_postings, second_token_postings, self.k)
-
-        # postings = []
-        # k_list = []
-        # for term in self.terms:
-        #     if term.startswith(('NEAR', 'near', 'Near')):
-        #         # get k and add it to the list
-        #         k = term.split("/")[1]
-        #         k_list.append(int(k))
-        #     else:
-        #         posting = TermLiteral(term, False).get_postings(index=index, token_processor=token_processor)
-        #         postings.append(posting)
-
-        # print("In Near Query component with tokenized query: ", postings)
-        # print("K's in the near query: ", k_list)
-
-        # posting1 = postings[0]
-        # j = 0
-        # for i in range(1, len(postings)):
-        #     # get the postings for each component
-        #     posting2 = postings[i]
-        #     # print("First posting: ")
-        #     # for post in posting1:
-        #     #     print(post)
-        #     # print("Second posting: ")
-        #     # for post in posting2:
-        #     #     print(post)
-        #     # print("------------------------------")
-        #     posting1 = merge_function.near_k_merge(posting1, posting2, k_list[j])
-        #     j += 1
-
-        # doc_ids = [p.doc_id for p in postings]
-        # print(f"Doc IDs:{doc_ids}")
-        # print('*' * 80)
 
         result = postings
         return result

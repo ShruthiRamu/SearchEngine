@@ -8,6 +8,8 @@ from indexes import Index, Posting
 
 
 class OrQuery(QueryComponent):
+    """OrQuery: Consists of a list of Querys, and answers getPostings by getting the postings of its components and
+    performing the "OR merge" routine """
     def __init__(self, components: List[QueryComponent]):
         self.components = components
 
@@ -17,7 +19,6 @@ class OrQuery(QueryComponent):
         # merging the resulting postings.
 
         componentPostings = []
-        mergedList = [Posting]
         merge_function = merge_posting
 
         # get postings for all the components
@@ -26,27 +27,8 @@ class OrQuery(QueryComponent):
             componentPostings.append(posting)
 
         merged_list = reduce(merge_function.or_merge, componentPostings)
-        # print("Merged List using reduce() for OR query: ", merged_list)
-
-        # for result_posting in merged_list:
-        #    print(result_posting, "\n-------------")
 
         result = merged_list
-
-        # do pairwise merging of the postings
-        # if len(componentPostings) >= 2:
-        #     first = componentPostings[0]
-        #     second = componentPostings[1]
-        #     mergedList = merge_function.merge(first, second, 'or')
-        #
-        #     i = 2  # continue with next index
-        #
-        #     while i < len(componentPostings):
-        #         updatedList = merge_function.merge(mergedList, componentPostings[i], 'or')
-        #         mergedList = updatedList
-        #         i += 1
-        #
-        # result = mergedList
         return result
 
     def __str__(self):

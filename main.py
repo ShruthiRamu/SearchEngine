@@ -37,11 +37,6 @@ def index_corpus(corpus: DocumentCorpus):
     for d in corpus:
         stream = EnglishTokenStream(d.get_content())
         position = 1
-        # for token in stream:
-        #     terms = token_processor.process_token(token)
-        #     for term in terms:
-        #         index.add_term(term=term, position=position, doc_id=d.id)
-        #     position += 1
 
         # Build  index
         current_terms = []
@@ -49,14 +44,10 @@ def index_corpus(corpus: DocumentCorpus):
         for current, next in pairwise(stream):
             current_terms = token_processor.process_token(current)
             next_terms = token_processor.process_token(next)
+            # Build positional index
             for term in current_terms:
                 positional_index.add_term(term=term, position=position, doc_id=d.id)
             for term1, term2 in zip(current_terms, next_terms):
-                # Build positional index
-                # print("Adding term to positional index: ", term1)
-                # positional_index.add_term(term=term1, position=position, doc_id=d.id)
-                # TODO: Confirm if & gets converted to blank white space/empty??
-                # TODO: for the-park, token provides thepark, the, park and only biword index added to this is thepark photo
                 # concatenate the pair as a single term
                 biword_term = term1 + ' ' + term2
                 # Build biword index
