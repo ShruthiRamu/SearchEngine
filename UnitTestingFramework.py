@@ -41,7 +41,7 @@ class TestSearchEngine(unittest.TestCase):
 
     def test_tokenizer3(self):
         self.assertListEqual(self.token_processor.process_token('-F""ree"-for-"all!'),
-                             ['freeforall', 'free', 'for', 'all'])
+                             ['freeforal', 'free', 'for', 'all'])
 
     def test_pii1(self):
         self.assertEqual(self.index[0].get_postings('high')[0].positions, self.petdict['high'][0][1])
