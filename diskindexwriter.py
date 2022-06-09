@@ -25,7 +25,6 @@ class DiskIndexWriter():
                 for p in postings:
                     print(p)
                 # Retreive a list of positing
-
                 # Find its length -> dft
                 # append final list
                 dft = len(postings)
@@ -33,15 +32,21 @@ class DiskIndexWriter():
                 # Loop over that posting list
                 # posting.doc_id ->
                 # append final list
+                prev_doc_id = 0
                 for posting in postings:
-                    f.write(pack('>i', posting.doc_id))
-                # tfd = len(positions)
-                # append final list
+                    id_gap = posting.doc_id - prev_doc_id
+                    f.write(pack('>i', id_gap))
+                    prev_doc_id = posting.doc_id
+                    # tfd = len(positions)
+                    # append final list
                     tfd = len(posting.positions)
                     f.write(pack('>i', tfd))
-                # list of positions
+                    # list of positions
+                    prev_position = 0
                     for position in posting.positions:
-                        f.write(pack('>i', position))
+                        position_gap = position - prev_position
+                        f.write(pack('>i', position_gap))
+                        prev_position = position
                     # Write each pos to file
                     # f.write(struct.pack(">i", docid)) -> 4 bytes
 
