@@ -210,17 +210,6 @@ doc_ids = [p.doc_id for p in posting1]
 print(f"Query: {query}, Doc IDs:{doc_ids}")
 print('*'*80)
 
-query = 'angels fear to tread'
-component = query.split(" ")
-posting1 = dictionary[component[0]]
-for i, comp in enumerate(component[1:]):
-  posting2 = dictionary[comp]
-  posting1 = merge_phrase(posting1, posting2, i+1)
-
-doc_ids = [p.doc_id for p in posting1]
-doc_ids = list(set(doc_ids))
-print(f"Query: {query}, Doc IDs:{doc_ids}")
-print('*'*80)
 
 query = 'dog god'
 component = query.split(" ")
