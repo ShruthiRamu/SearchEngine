@@ -30,15 +30,15 @@ if __name__ == "__main__":
     # Build the index over this directory.
     index = index_corpus(d)
 
-    for posting in index.get_postings("whale"):
+    for posting in index.get_positional_postings("whale"):
         print(posting)
 
-    #print(index.get_postings("whale"))
+    #print(index.get_positional_postings("whale"))
 
     # We aren't ready to use a full query parser;
     # for now, we'll only support single-term queries.
     query = "whale"  # hard-coded search for "whale"
-    for p in index.get_postings(query):
+    for p in index.get_positional_postings(query):
         print(f"Document ID {p.doc_id}")
 
     # TODO: fix this application so the user is asked for a term to search.

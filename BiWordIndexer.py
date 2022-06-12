@@ -49,15 +49,15 @@ if __name__ == "__main__":
 
     term = "new york"
     print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
+    for posting in index.get_positional_postings(term):
         print(posting)
 
     term = "york university"
     print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
+    for posting in index.get_positional_postings(term):
         print(posting)
 
     term = "in new"
     print(f"\nTerm:{term}")
-    for posting in index.get_postings(term):
+    for posting in index.get_positional_postings(term):
         print(posting)

@@ -43,5 +43,5 @@ if __name__ == "__main__":
         if query == 'quit':
             break
         # print(query)
-        for p in index.get_postings(query):
+        for p in index.get_positional_postings(query):
             print(f"Document ID(title) : {d.get_document(p.doc_id).title}")

@@ -1,5 +1,5 @@
 def merge(x, y, op):
-    """
+  """
   Do pairwise merge of posting x and y based on the logical operator, op.
   Assume x & y sorted.
   """
@@ -13,6 +13,7 @@ def merge(x, y, op):
                 merged_posting.append(x[i])
                 i += 1
                 j += 1
+            # Move the smaller index
             elif x[i] > y[j]:
                 j += 1
             elif x[i] < y[j]:

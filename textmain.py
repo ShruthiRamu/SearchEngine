@@ -61,9 +61,9 @@ if __name__ == "__main__":
 
     # This is for debugging
 
-    # print("Postings for camp: ", index.get_postings("camp"))
-    # print("Postings for camp: ", index.get_postings("camping"))
-    # for posting in index.get_postings("camp"):
+    # print("Postings for camp: ", index.get_positional_postings("camp"))
+    # print("Postings for camp: ", index.get_positional_postings("camping"))
+    # for posting in index.get_positional_postings("camp"):
     #     print(posting)
     # print("Vocab for 2.json: ", index.vocabulary())
     #
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # # parse the given query and print the postings
     # querycomponent = booleanqueryparser.parse_query(query='including the')
     #
-    # postings = querycomponent.get_postings(index, token_processor=token_processor)
+    # postings = querycomponent.get_positional_postings(index, token_processor=token_processor)
     # for post in postings:
     #     print(post)
     #

@@ -50,7 +50,7 @@ index = {
 
 from numpy import log as ln
 from heapq import nlargest
-query = "angels fear to tread"
+query = "fools rush in"
 
 accumulator = {}
 N = 10 # Corpus Size TO BE UPDATED

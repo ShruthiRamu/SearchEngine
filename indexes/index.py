@@ -8,8 +8,12 @@ class Index(ABC):
     """An Index can retrieve postings for a term from a data structure associating terms and the documents
     that contain them."""
 
+    def get_positional_postings(self, term: str) -> Iterable[Posting]:
+        """Retrieves a sequence of positional Postings of documents that contain the given term."""
+        pass
+
     def get_postings(self, term: str) -> Iterable[Posting]:
-        """Retrieves a sequence of Postings of documents that contain the given term."""
+        """Retrieves a sequence of positionless Postings of documents that contain the given term."""
         pass
 
     def vocabulary(self) -> List[str]:

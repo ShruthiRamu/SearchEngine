@@ -9,7 +9,6 @@ class SoundexIndex(Index):
 
     def add_term(self, code: str, term: str):
         """ Records the term for soundex code """
-        # TODO: DISCUSS RUN TIME
         if code in self._dictionary.keys() and term not in self._dictionary[code]:
             self._dictionary[code].append(term)
         else:

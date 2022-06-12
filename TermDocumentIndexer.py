@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # for now, we'll only support single-term queries.
     query = token_processor.process_token(input("Enter single-term search query: "))
     # query = "whale" # hard-coded search for "whale"
-    for p in index.get_postings(query):
+    for p in index.get_positional_postings(query):
         print(f"Document ID {p.doc_id}")
 
     # TODO: fix this application so the user is asked for a term to search.
