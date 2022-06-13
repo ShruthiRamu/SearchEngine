@@ -3,6 +3,7 @@ from . import Posting, Index
 from diskindexwriter import DiskIndexWriter
 from struct import unpack
 
+
 class DiskPositionalIndex(Index):
 
     def __init__(self, disk_index_writer:DiskIndexWriter):

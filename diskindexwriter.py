@@ -8,7 +8,7 @@ import BTrees
 class DiskIndexWriter():
 
     def __init__(self):
-        self.b_tree = {}
+        self.b_tree = {} #TODO: Make it B+ Tree
         self.posting_path = Path()
 
     def write_index(self, index: Index, absolute_path: Path) -> Iterable[int]:
