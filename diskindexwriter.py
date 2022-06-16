@@ -7,16 +7,20 @@ import sqlite3
 
 class DiskIndexWriter:
 
-    def __init__(self, document_weights):
+    def __init__(self, absolute_path, b_tree_exist, doc_weights_exist, document_weights=[]):
         self._conn = sqlite3.connect("term_byteposition.db")
         self._cursor = self._conn.cursor()
-        self._cursor.execute("""CREATE TABLE termBytePositions (
-                     term text, 
-                     byte_position integer
-                      )""")
+        if not b_tree_exist:
+            self._cursor.execute("""CREATE TABLE termBytePositions (
+                         term text, 
+                         byte_position integer
+                          )""")
         self.b_tree = {} #TODO: DELETE LATER
-        self.posting_path = Path()
-        self._write_docWeights(document_weights)
+        #self.posting_path = Path() # TODO: CHANGE IT BACK BEFORE SUBMITTING
+        self.posting_path = absolute_path
+        self.corpus_size = len(document_weights)
+        if not doc_weights_exist:
+            self._write_docWeights(document_weights)
 
     def _write_docWeights(self, document_weights):
         # Write Ld as an 8-byte double
@@ -50,10 +54,10 @@ class DiskIndexWriter:
                 dft = len(postings) # Document Frequency
                 f.write(pack('>i', dft))
                 byte_position += 4
-                print(f"Term: ", term)
+                # print(f"Term: ", term)
                 prev_doc_id = 0
                 for posting in postings:
-                    print(f"Posting: ", posting)
+                    # print(f"Posting: ", posting)
                     # Doc ID as 4-byte gap
                     doc_id_gap = posting.doc_id - prev_doc_id
                     f.write(pack('>i', doc_id_gap))

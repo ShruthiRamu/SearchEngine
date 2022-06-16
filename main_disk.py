@@ -17,6 +17,7 @@ from heapq import nlargest
 
 
 def index_corpus(corpus: DocumentCorpus) -> (Index, List[float]):
+    print("Indexing...")
     token_processor = NewTokenProcessor()
     index = PositionalInvertedIndex()
     document_weights = [] # Ld for all documents in corpus
@@ -56,13 +57,17 @@ if __name__ == "__main__":
 
     index, document_weights = index_corpus(corpus)
 
-    db_path = Path('term_byteposition.db')
-    if db_path.is_file():
-        db_path.unlink()
+    #db_path = Path('term_byteposition.db')
+    #if db_path.is_file():
+    #    db_path.unlink()
 
-    index_writer = DiskIndexWriter(document_weights)
+    b_tree_exist = True
+    doc_weights_exist = False
+
     index_path = corpus_path / "index" / "postings.bin"
-    index_writer.write_index(index, index_path)
+    index_writer = DiskIndexWriter(index_path, b_tree_exist, doc_weights_exist, document_weights)
+    # Write Disk Positional Inverted Index once
+    # index_writer.write_index(index, index_path)
 
     #query = "new york univers"
     query = "camp in yosemit"
@@ -70,8 +75,8 @@ if __name__ == "__main__":
 
     # ******** RANKED RETRIEVAL ALGORITHM ********
     accumulator = {}
-    N = len(document_weights)
-
+    N = index_writer.corpus_size
+    print(f"No. of documents in corpus: {N}")
     for term in set(query.split(" ")):
         postings = disk_index.get_postings(term)
         dft = len(postings)
@@ -93,7 +98,6 @@ if __name__ == "__main__":
     for k_documents in nlargest(K, heap):
         score, doc_id = k_documents
         print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-
 
 
 
