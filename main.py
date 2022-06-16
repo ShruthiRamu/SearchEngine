@@ -101,6 +101,7 @@ if __name__ == "__main__":
                     else:
                         print("Directory doesn't exist\n")
 
+
             print("Indexing...")
             program_start = False
             start = time_ns()

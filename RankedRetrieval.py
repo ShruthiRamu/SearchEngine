@@ -52,6 +52,8 @@ from numpy import log as ln
 from heapq import nlargest
 query = "fools rush in"
 
+
+
 accumulator = {}
 N = 10 # Corpus Size TO BE UPDATED
 L = len(index.keys()) # TO BE UPDATED
