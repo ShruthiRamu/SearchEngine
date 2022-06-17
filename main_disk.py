@@ -40,8 +40,9 @@ def index_corpus(corpus: DocumentCorpus) -> (Index, List[float]):
             wdt = wdt**2
             Ld += wdt
         Ld = sqrt(Ld)
+        #print(f"Computed Ld {corpus.get_document(d.id).title} = {Ld}")
         document_weights.append(Ld)
-
+    print("Indexing completed")
     return index, document_weights
 
 
@@ -53,45 +54,56 @@ if __name__ == "__main__":
     # corpus = DirectoryCorpus.load_text_directory(corpus_path, ".txt")
 
     corpus_path = Path("all-nps-sites-extracted")
+    #corpus_path = Path("dummyjsonfiles")
     corpus = DirectoryCorpus.load_json_directory(corpus_path, ".json")
 
     index, document_weights = index_corpus(corpus)
+    index_path = corpus_path / "index"
+    index_path = index_path.resolve()
+    if not index_path.is_dir():
+        index_path.mkdir()
+        dw = document_weights
+    else:
+        dw = []
+    #
+    # docWeightsPath = index_path / "docWeights.bin"
+    # dw = [] if docWeightsPath.is_file() else document_weights
 
-    #db_path = Path('term_byteposition.db')
-    #if db_path.is_file():
-    #    db_path.unlink()
-
-    b_tree_exist = True
-    doc_weights_exist = False
-
-    index_path = corpus_path / "index" / "postings.bin"
-    index_writer = DiskIndexWriter(index_path, b_tree_exist, doc_weights_exist, document_weights)
+    index_writer = DiskIndexWriter(index_path, dw)
     # Write Disk Positional Inverted Index once
-    # index_writer.write_index(index, index_path)
+    if not index_writer.posting_path.is_file():
+        index_writer.write_index(index)
 
     #query = "new york univers"
     query = "camp in yosemit"
+    #query = "southwind natur trail"
     disk_index = DiskPositionalIndex(index_writer)
 
     # ******** RANKED RETRIEVAL ALGORITHM ********
     accumulator = {}
-    N = index_writer.corpus_size
-    print(f"No. of documents in corpus: {N}")
+    N = len(document_weights)
+    #print(f"No. of documents in corpus: {N}")
     for term in set(query.split(" ")):
         postings = disk_index.get_postings(term)
         dft = len(postings)
         wqt = ln(1 + N / dft)
+        print(f"\n{dft} postings for the term {term}; with wQt = {wqt}")
 
         for posting in postings:
             wdt = 1 + ln(posting.tftd)
+            print(f"wDt({corpus.get_document(posting.doc_id).title}) = {wdt}")
             if posting.doc_id not in accumulator.keys():
                 accumulator[posting.doc_id] = 0.
             accumulator[posting.doc_id] += (wdt * wqt)
 
-    for doc_id, accum in accumulator.items():
+    for doc_id in accumulator.keys():
         Ld = disk_index.get_doc_weight(doc_id)
-        accum /= Ld
+        print(f"Ld({corpus.get_document(doc_id).title})  = {Ld}")
+        accumulator[doc_id] /= Ld
+        #print(f"{corpus.get_document(doc_id).title} -- {accumulator[doc_id]}")
 
+    print()
+    print("*"*80)
     K = 10
     heap = [(score, doc_id) for doc_id, score in accumulator.items()]
     print(f"Top {K} documents for query: {query}")

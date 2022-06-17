@@ -45,7 +45,7 @@ class DiskPositionalIndex(Index):
         # Read from on-disk postings.bin index
         num_bytes = 4
         postings = []
-        print(f"Start Byte Position Read: ", start_byte_position)
+        # print(f"Start Byte Position Read: ", start_byte_position)
         with open(self.disk_index_writer.posting_path, "rb") as f:
             f.seek(start_byte_position)
             dft = unpack(">i", f.read(num_bytes))[0]
@@ -77,10 +77,10 @@ class DiskPositionalIndex(Index):
         vocab.sort()
         return vocab
 
-    def get_doc_weight(self, doc_id:int, filename="docWeights.bin") -> float:
+    def get_doc_weight(self, doc_id: int) -> float:
         num_bytes = 8
         start_byte_position = doc_id * num_bytes
-        with open(filename, "rb") as f:
+        with open(self.disk_index_writer.doc_weights_path, "rb") as f:
             f.seek(start_byte_position)
             Ld = unpack(">d", f.read(num_bytes))[0]
         return Ld

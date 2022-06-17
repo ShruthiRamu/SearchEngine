@@ -7,36 +7,38 @@ import sqlite3
 
 class DiskIndexWriter:
 
-    def __init__(self, absolute_path, b_tree_exist, doc_weights_exist, document_weights=[]):
-        self._conn = sqlite3.connect("term_byteposition.db")
+    def __init__(self, index_path: Path, document_weights):
+        self.doc_weights_path = index_path / "docWeights.bin"
+        self.posting_path = index_path / "postings.bin"
+        self.term_byteposition_path = index_path / "term_byteposition.db"
+        term_byteposition_exists = self.term_byteposition_path.is_file()
+        self._conn = sqlite3.connect(self.term_byteposition_path)
         self._cursor = self._conn.cursor()
-        if not b_tree_exist:
+        if not term_byteposition_exists:
+            #print("Createing Table")
             self._cursor.execute("""CREATE TABLE termBytePositions (
                          term text, 
                          byte_position integer
                           )""")
         self.b_tree = {} #TODO: DELETE LATER
-        #self.posting_path = Path() # TODO: CHANGE IT BACK BEFORE SUBMITTING
-        self.posting_path = absolute_path
-        self.corpus_size = len(document_weights)
-        if not doc_weights_exist:
+        if not self.doc_weights_path.is_file():
             self._write_docWeights(document_weights)
 
     def _write_docWeights(self, document_weights):
         # Write Ld as an 8-byte double
-        with open("docWeights.bin", 'wb') as f:
+        with open(self.doc_weights_path, 'wb') as f:
             for doc_weight in document_weights:
                 f.write(pack('>d', float(doc_weight)))
 
-    def write_index(self, index: Index, absolute_path: Path) -> Iterable[int]:
+    def write_index(self, index: Index):
+        print("Writing index to disk...")
         """
         Write a binary-representation of index at the absolute path
         """
-        self.posting_path = absolute_path
         #mode = 'ab' if absolute_path.is_file() else 'wb'
         mode = 'wb'
         # Format for saving: dft, doc_id, tfd, pos1, pos2...
-        with open(absolute_path, mode) as f:
+        with open(self.posting_path, mode) as f:
             vocab = index.vocabulary() # All Terms Sorted
             # term -> [(Doc_id,[pos1,pos2...]), (Doc_id2, [pos1,...])]
             byte_position = 0 # Current byte position
@@ -54,10 +56,10 @@ class DiskIndexWriter:
                 dft = len(postings) # Document Frequency
                 f.write(pack('>i', dft))
                 byte_position += 4
-                # print(f"Term: ", term)
+                #print(f"Term: ", term)
                 prev_doc_id = 0
                 for posting in postings:
-                    # print(f"Posting: ", posting)
+                    #print(f"Posting: ", posting)
                     # Doc ID as 4-byte gap
                     doc_id_gap = posting.doc_id - prev_doc_id
                     f.write(pack('>i', doc_id_gap))
@@ -75,8 +77,13 @@ class DiskIndexWriter:
                         byte_position += 4
                         prev_position = position
 
+        print("Writing index to disk completed")
+
     def get_byte_position(self, term: str) -> int:
         self._cursor.execute("SELECT byte_position FROM termBytePositions WHERE term=:term",
                   {'term': term})
         byte_pos = self._cursor.fetchone()
+        if not byte_pos:
+            print(f"Term doesn't exist in termBytePositions")
+
         return byte_pos[0] if byte_pos else -1
