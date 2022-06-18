@@ -77,10 +77,17 @@ class DiskPositionalIndex(Index):
         vocab.sort()
         return vocab
 
-    def get_doc_weight(self, doc_id: int) -> float:
+    def get_doc_info(self, doc_id: int, doc_info: str) -> float:
+        doc_info_dict = {"Ld": 0, "docLength": 1, "byte_size": 2, "avg_tftd": 3}
         num_bytes = 8
-        start_byte_position = doc_id * num_bytes
+        start_byte_position = doc_id * 32 + (doc_info_dict[doc_info] * num_bytes)
+        #print("start_byte_position: ", start_byte_position)
         with open(self.disk_index_writer.doc_weights_path, "rb") as f:
             f.seek(start_byte_position)
-            Ld = unpack(">d", f.read(num_bytes))[0]
-        return Ld
+            doc_param = unpack(">d", f.read(num_bytes))[0]
+        return doc_param
+
+    def get_avg_tokens_corpus(self) -> float:
+        with open(self.disk_index_writer.avg_tokens_path, 'rb') as f:
+            avg_tokens_length = unpack(">d", f.read(8))[0]
+        return avg_tokens_length

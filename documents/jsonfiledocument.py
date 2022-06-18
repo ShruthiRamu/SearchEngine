@@ -17,6 +17,9 @@ class JsonFileDocument(Document):
     def get_file_name(self) -> str:
         return self.path.stem
 
+    def get_file_size(self) -> int:
+        return self.path.stat().st_size
+
     # returns a string
     def get_title(self) -> str:
         # Opening JSON file

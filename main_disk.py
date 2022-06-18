@@ -5,7 +5,7 @@ from indexes import Index
 from indexes.diskpositionalindex import DiskPositionalIndex
 from indexes.invertedindex import InvertedIndex
 from indexes.positionalinvertedindex import PositionalInvertedIndex
-from queries import BooleanQueryParser, PhraseLiteral
+from queries import BooleanQueryParser, PhraseLiteral, TermLiteral
 from text.englishtokenstream import EnglishTokenStream
 from time import time_ns
 from text.newtokenprocessor import NewTokenProcessor
@@ -69,22 +69,27 @@ if __name__ == "__main__":
     # docWeightsPath = index_path / "docWeights.bin"
     # dw = [] if docWeightsPath.is_file() else document_weights
 
-    index_writer = DiskIndexWriter(index_path, dw)
+    index_writer = DiskIndexWriter(index_path, dw, [], [], [], 0)
     # Write Disk Positional Inverted Index once
     if not index_writer.posting_path.is_file():
         index_writer.write_index(index)
 
     #query = "new york univers"
-    query = "camp in yosemit"
+    #query = "camp in yosemit"
+    query = "camping in yosemite"
     #query = "southwind natur trail"
     disk_index = DiskPositionalIndex(index_writer)
+
+    token_processor = NewTokenProcessor()
 
     # ******** RANKED RETRIEVAL ALGORITHM ********
     accumulator = {}
     N = len(document_weights)
     #print(f"No. of documents in corpus: {N}")
     for term in set(query.split(" ")):
-        postings = disk_index.get_postings(term)
+        tokenized_term = TermLiteral(term, False)
+        postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
+        #postings = disk_index.get_postings(term)
         dft = len(postings)
         wqt = ln(1 + N / dft)
         print(f"\n{dft} postings for the term {term}; with wQt = {wqt}")
@@ -97,7 +102,7 @@ if __name__ == "__main__":
             accumulator[posting.doc_id] += (wdt * wqt)
 
     for doc_id in accumulator.keys():
-        Ld = disk_index.get_doc_weight(doc_id)
+        Ld = disk_index.get_doc_info(doc_id, "Ld")
         print(f"Ld({corpus.get_document(doc_id).title})  = {Ld}")
         accumulator[doc_id] /= Ld
         #print(f"{corpus.get_document(doc_id).title} -- {accumulator[doc_id]}")
