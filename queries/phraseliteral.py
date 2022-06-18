@@ -38,6 +38,8 @@ class PhraseLiteral(QueryComponent):
             posting = index.get_postings(biword_term)
             return list(posting)
 
+
+
         # Handle longer phrase queries
         for term in self.terms:
             term_literal = TermLiteral(term, False)

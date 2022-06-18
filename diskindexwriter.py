@@ -7,14 +7,8 @@ import sqlite3
 
 class DiskIndexWriter:
 
-    def __init__(self, index_path: Path):
-        self.doc_weights_path = index_path / "docWeights.bin"
-        self.posting_path = index_path / "postings.bin"
-        self.term_byteposition_path = index_path / "term_byteposition.db"
-        self.avg_tokens_path = index_path / "avg_tokens_corpus.bin"
-
-    def __init__(self, index_path: Path, document_weights, docLengthd,
-                 byteSized, average_tftd, document_tokens_length_average):
+    def __init__(self, index_path: Path, document_weights=[], docLengthd=[],
+                 byteSized=[], average_tftd=[], document_tokens_length_average=[]):
         self.doc_weights_path = index_path / "docWeights.bin"
         self.posting_path = index_path / "postings.bin"
         self.term_byteposition_path = index_path / "term_byteposition.db"
@@ -28,11 +22,12 @@ class DiskIndexWriter:
                          term text, 
                          byte_position integer
                           )""")
-        self.b_tree = {}  # TODO: DELETE LATER
         if not self.doc_weights_path.is_file():
             self._write_docWeights(document_weights, docLengthd, byteSized, average_tftd)
         if not self.avg_tokens_path.is_file():
             self._write_avg_tokens_corpus(document_tokens_length_average=document_tokens_length_average)
+
+
 
     def _write_docWeights(self, document_weights, docLengthd, byteSized, average_tftd):
         # Write Ld as an 8-byte double
@@ -63,8 +58,6 @@ class DiskIndexWriter:
             # Indicates bytes position of where posting begins for a particular term
             # byte_positions = [byte_position]
             for _, term in enumerate(vocab):
-                # TODO: REMOVE THE DICTIONARY AFTER TESTING
-                self.b_tree[term] = byte_position
                 with self._conn:
                     self._cursor.execute("INSERT INTO termBytePositions VALUES (:term, :byte_position)",
                                          {'term': term, 'byte_position': byte_position})
