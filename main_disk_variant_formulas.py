@@ -97,16 +97,42 @@ if __name__ == "__main__":
     if not index_path.is_dir():
         index_path.mkdir()
 
-    corpus_size = len(document_weights)
+    # corpus_size = len(document_weights)
+    corpus_size = len(list(corpus_path.glob("*.json")))
 
-    index_writer = DiskIndexWriter(index_path, document_weights, document_tokens_length_per_document,
-                                   byte_size_d, average_tftd, document_tokens_length_average)
+    # Since you have already saved all of these values in the disk no need to call this again
+    # index_writer = DiskIndexWriter(index_path, document_weights, document_tokens_length_per_document,
+    #                                byte_size_d, average_tftd, document_tokens_length_average)
+
+    index_writer = DiskIndexWriter(index_path=index_path)
+
     # Write Disk Positional Inverted Index once
-    if not index_writer.posting_path.is_file():
-        index_writer.write_index(index)
+    # if not index_writer.posting_path.is_file():
+    #     index_writer.write_index(index)
 
-    # index_writer = DiskIndexWriter(index_path=index_path)
+    # BOOLEAN QUERIES
+    # query = 'yosemite'
+    # token_processor = NewTokenProcessor()
+    # print(f"\nSearching the Term:{query}")
+    # booleanqueryparser = BooleanQueryParser()
+    #
+    #     # parse the given query and print the postings
+    # querycomponent = booleanqueryparser.parse_query(query=query)
+    #
+    # disk_index = DiskPositionalIndex(index_writer)
+    #
+    # postings = querycomponent.get_postings(disk_index, NewTokenProcessor())
+    #     # Get all the doc ids
+    # doc_ids = [p.doc_id for p in postings]
+    # doc_ids = list(set(doc_ids))
+    # num_docs = len(doc_ids)
+    # print(f"Total Documents: {num_docs}")
 
+    # for i, doc_id in enumerate(doc_ids):
+    #     print(f"[{i + 1}] {corpus.get_document(doc_id).title}")
+    # print(f"Total Documents: {num_docs}")
+
+    # RANKED RETRIEVAL
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 
     while True:
@@ -127,10 +153,12 @@ if __name__ == "__main__":
 
         # query = "new york univers"
         # query = "The park"
-        query = "camping in yosemite"
+        # query = "camping in yosemite"
+        # query = "strenuous"
+        query = "devils postpile"
 
         disk_index = DiskPositionalIndex(index_writer)
-        # print("Printing return value: ", rankedStrategy.calculate(query, disk_index, corpus_size))
+
         accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
 
         # print("Returned value: ", accumulator)
@@ -141,3 +169,4 @@ if __name__ == "__main__":
         for k_documents in nlargest(K, heap):
             score, doc_id = k_documents
             print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
+            # print(f"Doc id: {doc_id}, Score: {score}")

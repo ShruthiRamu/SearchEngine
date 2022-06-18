@@ -179,7 +179,7 @@ if __name__ == "__main__":
                     if corpus_path.is_dir():
                         if any(f.endswith('.txt') for f in os.listdir(corpus_path)):
                             corpus = DirectoryCorpus.load_text_directory(corpus_path, '.txt')
-                            corpus_size = len(list(corpus_path.glob("*.json")))
+                            corpus_size = len(list(corpus_path.glob("*.txt")))
                         elif any(f.endswith('.json') for f in os.listdir(corpus_path)):
                             corpus = DirectoryCorpus.load_json_directory(corpus_path, '.json')
                             corpus_size = len(list(corpus_path.glob("*.json")))
@@ -210,6 +210,8 @@ if __name__ == "__main__":
             else:
                 index_writer = DiskIndexWriter(index_path)
 
+            disk_index = DiskPositionalIndex(index_writer)
+
         elif query.startswith(":q"):
             print("Quitting the program....")
             break
@@ -230,7 +232,7 @@ if __name__ == "__main__":
         elif query.startswith(":vocab"):
             # Print 1000 terms in vocabulary
             # vocabulary = index.vocabulary()
-            vocabulary = positional_index.vocabulary()
+            vocabulary = disk_index.vocabulary()
             # vocabulary_length = len(vocabulary)
             vocabulary_length = cardinality.count(vocabulary)
             if vocabulary_length:
@@ -290,7 +292,7 @@ if __name__ == "__main__":
                     print("Found biword phrase query hence using biword index.....\n")
                     postings = querycomponent.get_postings(biword_index, NewTokenProcessor())
                 else:
-                    postings = querycomponent.get_postings(positional_index, NewTokenProcessor())
+                    postings = querycomponent.get_postings(disk_index, NewTokenProcessor())
                 # Get all the doc ids
                 doc_ids = [p.doc_id for p in postings]
                 doc_ids = list(set(doc_ids))

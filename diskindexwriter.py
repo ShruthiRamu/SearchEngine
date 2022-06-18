@@ -22,9 +22,9 @@ class DiskIndexWriter:
                          term text, 
                          byte_position integer
                           )""")
-        if not self.doc_weights_path.is_file():
+        if document_weights and not self.doc_weights_path.is_file():
             self._write_docWeights(document_weights, docLengthd, byteSized, average_tftd)
-        if not self.avg_tokens_path.is_file():
+        if document_tokens_length_average and not self.avg_tokens_path.is_file():
             self._write_avg_tokens_corpus(document_tokens_length_average=document_tokens_length_average)
 
 

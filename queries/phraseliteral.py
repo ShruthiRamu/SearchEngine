@@ -42,7 +42,7 @@ class PhraseLiteral(QueryComponent):
 
         # Handle longer phrase queries
         for term in self.terms:
-            term_literal = TermLiteral(term, False)
+            term_literal = TermLiteral(term, False, mode='boolean')
             posting = term_literal.get_postings(index, token_processor=token_processor)
             componentPostings.append(posting)
 

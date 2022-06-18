@@ -128,7 +128,7 @@ class BooleanQueryParser:
         # This is a term literal containing a single term.
         return BooleanQueryParser._Literal(
             BooleanQueryParser._StringBounds(start_index, length_out),
-            TermLiteral(subquery[start_index:start_index + length_out], is_negative=is_negative_component)
+            TermLiteral(subquery[start_index:start_index + length_out], is_negative=is_negative_component, mode='boolean')
         )
 
     def parse_query(self, query: str) -> QueryComponent:

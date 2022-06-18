@@ -60,7 +60,7 @@ class DefaultStrategy(IRankedStrategy):
         N = corpus_size
         token_processor = NewTokenProcessor()
         for term in set(query.split(" ")):
-            tokenized_term = TermLiteral(term, False)
+            tokenized_term = TermLiteral(term, False, mode='rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             # postings = disk_index.get_postings(term)
             dft = len(postings)
@@ -90,7 +90,7 @@ class TraditionalStrategy(IRankedStrategy):
         token_processor = NewTokenProcessor()
 
         for term in set(query.split(" ")):
-            tokenized_term = TermLiteral(term, False)
+            tokenized_term = TermLiteral(term, False, mode='rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
             wqt = ln(N / dft)
@@ -108,6 +108,7 @@ class TraditionalStrategy(IRankedStrategy):
         return accumulator
 
 
+# TODO: Only the 10th doc is different from Neal's result
 class OkapiBM25Strategy(IRankedStrategy):
     """
     Implement the algorithm using the Strategy interface.
@@ -119,7 +120,7 @@ class OkapiBM25Strategy(IRankedStrategy):
         token_processor = NewTokenProcessor()
 
         for term in set(query.split(" ")):
-            tokenized_term = TermLiteral(term, False)
+            tokenized_term = TermLiteral(term, False, mode='rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
             wqt = max(0.1, ln((N - dft + 0.5) / (dft + 0.5)))
@@ -127,9 +128,9 @@ class OkapiBM25Strategy(IRankedStrategy):
             for posting in postings:
                 docLength = disk_index.get_doc_info(posting.doc_id, "docLength")
                 doc_tokens_len_avg = disk_index.get_avg_tokens_corpus()
-                wdt = (2.2 * posting.tftd) / \
-                      ((1.2 * (0.25 + (
-                              0.75 * (docLength / doc_tokens_len_avg)))) + posting.tftd)
+                denominator = (1.2 * (0.25 + (0.75 * (docLength / doc_tokens_len_avg)))) + posting.tftd
+                wdt = (2.2 * posting.tftd) / denominator
+
                 if posting.doc_id not in accumulator.keys():
                     accumulator[posting.doc_id] = 0.
                 accumulator[posting.doc_id] += (wdt * wqt)
@@ -151,7 +152,7 @@ class WackyStrategy(IRankedStrategy):
         N = corpus_size
         token_processor = NewTokenProcessor()
         for term in set(query.split(" ")):
-            tokenized_term = TermLiteral(term, False)
+            tokenized_term = TermLiteral(term, False, 'rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
             wqt = max(0, ln((N - dft) / dft))
