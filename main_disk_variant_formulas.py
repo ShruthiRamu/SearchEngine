@@ -226,7 +226,9 @@ if __name__ == "__main__":
     # query = '"Carver Birthplace Association"'
     # query = '"Coral Reef"'
     # query = '"new bedford whaling national historical park"'
-    query = '"museum fees"'
+    # query = '"museum fees"'
+    # query = '[Coral NEAR/4 Products]'
+    query = '[learn NEAR/3 park]'
     token_processor = NewTokenProcessor()
     print(f"\nSearching the Term:{query}")
     booleanqueryparser = BooleanQueryParser()
