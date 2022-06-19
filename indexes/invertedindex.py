@@ -17,7 +17,7 @@ class InvertedIndex(Index):
         else:
             self._dictionary[term] = [Posting(doc_id=doc_id)]
 
-    def get_postings(self, term: str) -> Iterable[Posting]:
+    def get_positional_postings(self, term: str) -> Iterable[Posting]:
         """Returns a list of Postings for all documents that contain the given term."""
         return self._dictionary[term] if term in self._dictionary.keys() else []
 
