@@ -156,23 +156,28 @@ if __name__ == "__main__":
     ranking_startegy_selected = False
 
     initial_indexing = True if int(mode) == 1 else False
-    queryEmpited = True
+    querying_mode = not initial_indexing
+    empty_query = True
+
     while True:
         # Start building index or querying
         if initial_indexing:
+            print("Initial Indexing mode...")
             query = ""
-            querying_mode = False
-        else:
-            querying_mode = True
-            if queryEmpited:
+
+        if querying_mode:
+            if empty_query:
                 query = ""
+            else:
+                print("\nSearch")
+                query = input(">> ")
 
         #  index the specified folder
-        if query.startswith(":index") or querying_mode or initial_indexing:
+        if query.startswith(":index") or empty_query or initial_indexing:
             while True:
                 # Assuming in cwd
-                dir = input("Enter Directory Name: ") if initial_indexing else query
-                if initial_indexing or dir.startswith(":index"):
+                dir = input("Enter Directory Name: ") if initial_indexing or querying_mode else query
+                if initial_indexing or querying_mode or dir.startswith(":index"):
                     if dir.startswith(":index"):
                         _, dir = dir.split(" ")
                     corpus_path = Path(dir.rstrip())
@@ -187,32 +192,36 @@ if __name__ == "__main__":
                     else:
                         print("Directory doesn't exist\n")
 
+
             index_path = corpus_path / "index"
             index_path = index_path.resolve()
 
-            if initial_indexing:
-                print("Indexing...")
-                initial_indexing = False
-                start = time_ns()
-                positional_index, document_weights, document_tokens_length_per_document, byte_size_d, average_tftd, document_tokens_length_average \
-                    = index_corpus(corpus)
-                end = time_ns()
-                print(f"In-Memory Indexing Time: {(end - start)/1e+9} secs\n")
+            print("Indexing...")
+            start = time_ns()
+            positional_index, document_weights, document_tokens_length_per_document, byte_size_d, average_tftd, document_tokens_length_average \
+                = index_corpus(corpus)
+            end = time_ns()
+            print(f"In-Memory Indexing Time: {(end - start)/1e+9} secs\n")
 
-                # Creates a new folder inside corpus to store on-disk index information
-                if not index_path.is_dir():
-                    index_path.mkdir()
+            # Creates a new folder inside corpus to store on-disk index information
+            if not index_path.is_dir():
+                index_path.mkdir()
                 index_writer = DiskIndexWriter(index_path, document_weights, document_tokens_length_per_document,
-                                               byte_size_d, average_tftd, document_tokens_length_average)
+                                           byte_size_d, average_tftd, document_tokens_length_average)
                 # Write Positional Inverted Index to disk
-                if not index_writer.posting_path.is_file():
-                    index_writer.write_index(positional_index)
-            else:
+                index_writer.write_index(positional_index)
+
+            if initial_indexing:
+                print("\nQutting the program...")
+                quit()
+
+            if empty_query:
                 index_writer = DiskIndexWriter(index_path)
+                empty_query = False
 
             disk_index = DiskPositionalIndex(index_writer)
 
-        elif query.startswith(":q"):
+        elif query == ":q":
             print("Quitting the program....")
             break
 
@@ -266,17 +275,28 @@ if __name__ == "__main__":
             else:
                 print("No author matches found")
 
+        elif query.startswith(":querystyle"):
+            print("\nQuery Style:")
+            query_style = input("[1] Boolean \n[2] Ranked \n>> ")
+            querying_style_selected = True
+
+        elif query.startswith(":rankformula"):
+            print("\nChoose a ranking strategy:")
+            print("1. Default")
+            print("2. Traditional(tf-idf)")
+            print("3. Okapi BM25")
+            print("4. Wacky")
+            choice = input(">> ")
+            strategy = strategyMap.get(int(choice))
+            ranking_startegy_selected = True
 
         # Handle and parse the query
         elif querying_mode:
-
             # TWO QUERYING SYTLES: BOOLEAN & RANKED
             if not querying_style_selected:
-                query_style = input("\n[1] Boolean \n[2] Ranked \n>> ")
+                print("\nQuery Style:")
+                query_style = input("[1] Boolean \n[2] Ranked \n>> ")
                 querying_style_selected = True
-
-            query = input("\nSearch: ")
-            queryEmpited = False
 
             if int(query_style) == 1:
                 # BOOLEAN QUERIES
@@ -321,31 +341,26 @@ if __name__ == "__main__":
             else:
                 # RANKED RETRIEVAL MODE
                 if not ranking_startegy_selected:
-                    print("Choose a ranking strategy\n")
-                    print("1. Default\n")
-                    print("2. Traditional(tf-idf)\n")
-                    print("3. Okapi BM25\n")
-                    print("4. Wacky\n")
+                    print("\nChoose a ranking strategy:")
+                    print("1. Default")
+                    print("2. Traditional(tf-idf)")
+                    print("3. Okapi BM25")
+                    print("4. Wacky")
                     choice = input(">> ")
                     strategy = strategyMap.get(int(choice))
-
                     ranking_startegy_selected = True
 
                 rankedStrategy = RankedStrategy(strategy)
 
                 # PERFORM RANKED RETRIEVAL ALGORITHM
+                print(f"Query going in: {query}")
                 accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
 
                 # SHOW THE RESULTS
                 K = 10
                 heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-                print("*"*80)
+                print("*" * 80)
                 print(f"Top {K} documents for query: {query}")
                 for k_documents in nlargest(K, heap):
                     score, doc_id = k_documents
                     print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-
-
-
-
-
