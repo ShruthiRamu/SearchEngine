@@ -5,6 +5,18 @@ from indexes.index import Index
 import sqlite3
 
 
+# VB encode a single integer
+def VB_encode_number(n):
+    bytes = []
+    while True:
+        bytes.insert(0, (n % 128))
+        if n < 128:
+            break
+        n = n // 128
+    bytes[-1] += 128
+    return bytes
+
+
 class DiskIndexWriter:
 
     def __init__(self, index_path: Path, document_weights=[], docLengthd=[],
@@ -26,8 +38,6 @@ class DiskIndexWriter:
             self._write_docWeights(document_weights, docLengthd, byteSized, average_tftd)
         if document_tokens_length_average and not self.avg_tokens_path.is_file():
             self._write_avg_tokens_corpus(document_tokens_length_average=document_tokens_length_average)
-
-
 
     def _write_docWeights(self, document_weights, docLengthd, byteSized, average_tftd):
         # Write Ld as an 8-byte double
@@ -65,29 +75,36 @@ class DiskIndexWriter:
                 postings = index.get_positional_postings(term)
                 # Document Frequency as 4-byte integer
                 dft = len(postings)  # Document Frequency
-                f.write(pack('>i', dft))
-                byte_position += 4
+                dft_encode = VB_encode_number(dft)
+                for n in dft_encode:
+                    f.write(n.to_bytes(1, 'big'))
+                byte_position += len(dft_encode)
                 # print(f"Term: ", term)
                 prev_doc_id = 0
                 for posting in postings:
                     # print(f"Posting: ", posting)
                     # Doc ID as 4-byte gap
                     doc_id_gap = posting.doc_id - prev_doc_id
-                    f.write(pack('>i', doc_id_gap))
-                    byte_position += 4
+                    id_encode = VB_encode_number(doc_id_gap)
+                    for n in id_encode:
+                        f.write(n.to_bytes(1, 'big'))
+                    byte_position += len(id_encode)
                     prev_doc_id = posting.doc_id
                     # Term Frequency as 4-byte integer
                     tfd = len(posting.positions)
-                    f.write(pack('>i', tfd))
-                    byte_position += 4
+                    tfd_encode = VB_encode_number(tfd)
+                    for n in tfd_encode:
+                        f.write(n.to_bytes(1, 'big'))
+                    byte_position += len(tfd_encode)
                     # Positions as 4-byte gap
                     prev_position = 0
                     for position in posting.positions:
                         position_gap = position - prev_position
-                        f.write(pack('>i', position_gap))
-                        byte_position += 4
+                        position_encode = VB_encode_number(position_gap)
+                        for n in position_encode:
+                            f.write(n.to_bytes(1, 'big'))
+                        byte_position += len(position_encode)
                         prev_position = position
-
         print("Writing index to disk completed")
 
     def get_byte_position(self, term: str) -> int:
