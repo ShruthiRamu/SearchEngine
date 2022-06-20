@@ -73,8 +73,10 @@ class DiskPositionalIndex(Index):
 
     def vocabulary(self) -> List[str]:
         """A (sorted) list of all terms in the index vocabulary."""
-        vocab = list(self.disk_index_writer.b_tree.keys())
-        vocab.sort()
+        vocab = []
+        with open(self.disk_index_writer.vocab_list_path, "r") as f:
+            for term in f:
+                vocab.append(term.strip())
         return vocab
 
     def get_doc_info(self, doc_id: int, doc_info: str) -> float:
