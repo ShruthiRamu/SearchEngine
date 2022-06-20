@@ -290,10 +290,11 @@ if __name__ == "__main__":
             end = time_ns()
             print(f"In-Memory Indexing Time: {(end - start) / 1e+9} secs\n")
 
-            # TODO: REMOVE AFTER CREATING A VOCAB LIST
-            vocab_list_path = index_path / "vocab_list.txt"
-            with open(vocab_list_path, 'w') as f:
-                f.writelines('\n'.join(vocab))
+            # To write the vocab for first time
+            # vocab_list_path = index_path / "vocab_list.txt"
+            # vocab = positional_index.vocabulary()
+            # with open(vocab_list_path, 'w') as f:
+            #     f.writelines('\n'.join(vocab))
 
             # Creates a new folder inside corpus to store on-disk index information
             if not index_path.is_dir():
