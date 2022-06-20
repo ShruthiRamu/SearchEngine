@@ -28,6 +28,7 @@ class DiskIndexWriter:
         term_byteposition_exists = self.term_byteposition_path.is_file()
         self._conn = sqlite3.connect(self.term_byteposition_path)
         self._cursor = self._conn.cursor()
+        self.vocab_list_path = index_path / "vocab_list.txt"
         if not term_byteposition_exists:
             # print("Createing Table")
             self._cursor.execute("""CREATE TABLE termBytePositions (
@@ -105,6 +106,10 @@ class DiskIndexWriter:
                             f.write(n.to_bytes(1, 'big'))
                         byte_position += len(position_encode)
                         prev_position = position
+
+        with open(self.vocab_list_path, 'w') as f:
+            f.writelines('\n'.join(vocab))
+
         print("Writing index to disk completed")
 
     def get_byte_position(self, term: str) -> int:

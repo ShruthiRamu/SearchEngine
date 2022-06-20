@@ -36,8 +36,8 @@ class PhraseLiteral(QueryComponent):
             tokenized_query_term_1 = first_tokenized_terms[0]
             tokenized_query_term_2 = second_tokenized_terms[0]
             biword_term = tokenized_query_term_1 + ' ' + tokenized_query_term_2
-            # posting = index.get_postings(biword_term)
-            posting = index.get_positional_postings(biword_term)
+            posting = index.get_postings(biword_term)
+            # posting = index.get_positional_postings(biword_term)
             return list(posting)
 
         # Handle longer phrase queries
