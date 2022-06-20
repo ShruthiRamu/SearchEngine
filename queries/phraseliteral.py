@@ -1,3 +1,4 @@
+import inspect
 from typing import List, Iterable
 
 import merge_posting
@@ -28,7 +29,12 @@ class PhraseLiteral(QueryComponent):
         merge_function = merge_posting
 
         # Handle if biword index
-        if len(self.terms) == 2:
+        # TODO: Breaks for "law prohibit" -camping, because phrase literal thinks its biword index and enters this condition
+        if len(self.terms) == 2 and inspect.stack()[1].filename == "/Users/macuser/Documents/CSULB" \
+                                                                   "/SearchEngineTechnology/Project/CECS529" \
+                                                                   "-SearchEngineTechnology" \
+                                                                   "/main.py":
+            # print("PhraseLiteral: Caller: ", inspect.stack()[1].filename)
             # Assuming the first term the token processor always returns the pair value
             first_tokenized_terms = token_processor.process_token(self.terms[0])
             second_tokenized_terms = token_processor.process_token(self.terms[1])
