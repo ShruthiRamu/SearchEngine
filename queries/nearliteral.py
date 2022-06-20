@@ -29,8 +29,8 @@ class NearLiteral(QueryComponent):
         result = [Posting]
         merge_function = merge_posting
 
-        first_token_postings = TermLiteral(self.first_token, False).get_postings(index=index, token_processor=token_processor)
-        second_token_postings = TermLiteral(self.second_token, False).get_postings(index=index, token_processor=token_processor)
+        first_token_postings = TermLiteral(self.first_token, False, mode='boolean').get_postings(index=index, token_processor=token_processor)
+        second_token_postings = TermLiteral(self.second_token, False, mode='boolean').get_postings(index=index, token_processor=token_processor)
 
         postings = merge_function.near_k_merge(first_token_postings, second_token_postings, self.k)
 
