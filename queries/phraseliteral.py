@@ -23,18 +23,13 @@ class PhraseLiteral(QueryComponent):
         self.terms = term.split(" ")
         self.is_negative = is_negative
 
-    def get_postings(self, index, token_processor: TokenProcessor) -> List[Posting]:
+    def get_postings(self, index, token_processor: TokenProcessor, is_biword=False) -> List[Posting]:
         result = [Posting]
         componentPostings = []
         merge_function = merge_posting
 
         # Handle if biword index
-        # TODO: Breaks for "law prohibit" -camping, because phrase literal thinks its biword index and enters this condition
-        if len(self.terms) == 2 and inspect.stack()[1].filename == "/Users/macuser/Documents/CSULB" \
-                                                                   "/SearchEngineTechnology/Project/CECS529" \
-                                                                   "-SearchEngineTechnology" \
-                                                                   "/main.py":
-            # print("PhraseLiteral: Caller: ", inspect.stack()[1].filename)
+        if len(self.terms) == 2 and is_biword:
             # Assuming the first term the token processor always returns the pair value
             first_tokenized_terms = token_processor.process_token(self.terms[0])
             second_tokenized_terms = token_processor.process_token(self.terms[1])

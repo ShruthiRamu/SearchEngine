@@ -406,7 +406,7 @@ if __name__ == "__main__":
                 # Handle if it is a biword phrase query
                 if isinstance(querycomponent, PhraseLiteral) and len(querycomponent.terms) == 2:
                     print("Found biword phrase query hence using biword on disk index.....\n")
-                    postings = querycomponent.get_postings(biword_disk_index, NewTokenProcessor())
+                    postings = querycomponent.get_postings(biword_disk_index, NewTokenProcessor(), is_biword=True)
                 else:
                     # Quickfix done: Breaks for "law prohibit" -camping, because phrase literal thinks its biword index
                     postings = querycomponent.get_postings(disk_index, NewTokenProcessor())
