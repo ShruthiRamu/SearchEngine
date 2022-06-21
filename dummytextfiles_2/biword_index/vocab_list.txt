@@ -1,0 +1,6 @@
+cat jump
+dog run
+fast cat
+high cat
+jump high
+run fast
