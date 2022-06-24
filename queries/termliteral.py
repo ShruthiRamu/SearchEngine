@@ -20,7 +20,13 @@ class TermLiteral(QueryComponent):
         tokenized_term = token_processor.process_token(token=self.term)
         is_hyphenated = False
         if '-' in self.term:
-            tokenized_term = tokenized_term[0]
+            # print("Found hyphenated term: ", tokenized_term)
+            if self.mode == 'rank' and len(tokenized_term) > 1:
+                # This change is to handle a term like "real-gas" -> [ 'realgas', 'real', 'gas'], so only use 'real'
+                # and 'gas' for precision and recall
+                tokenized_term.pop(0)
+            else:
+                tokenized_term = tokenized_term[0]
             is_hyphenated = True
         postings = []
         postings_list = []
@@ -28,7 +34,14 @@ class TermLiteral(QueryComponent):
             # Do not perform the split on hyphens step on query literals; use the whole literal, including the hyphen.
             if is_hyphenated:
                 if self.mode == 'rank':
-                    postings = index.get_postings(tokenized_term)
+                    if len(tokenized_term) > 1:
+                        for term in tokenized_term:
+                            # This change is to handle a term like "real-gas" -> [ 'realgas', 'real', 'gas'],
+                            # so only use 'real' and 'gas' for precision and recall
+                            # print("Searching for term in hyphenated term: ", term)
+                            postings = index.get_postings(term)
+                    else:
+                        postings = index.get_postings(tokenized_term)
                 elif self.mode == 'boolean':
                     postings = index.get_positional_postings(tokenized_term)
             else:

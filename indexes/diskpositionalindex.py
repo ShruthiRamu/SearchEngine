@@ -100,7 +100,9 @@ class DiskPositionalIndex(Index):
         postings = []
         # print(f"Start Byte Position Read: ", start_byte_position)
         with open(self.disk_index_writer.posting_path, "rb") as f:
-            f.seek(start_byte_position)
+            # Handling missing terms to avoid errors, for precision and recall change
+            if start_byte_position != -1:
+                f.seek(start_byte_position)
             # dft = unpack(">i", f.read(num_bytes))[0]
             dft = ord(f.read(num_bytes))
             dft_arr = []
