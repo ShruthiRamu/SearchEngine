@@ -116,7 +116,7 @@ class DiskIndexWriter:
         self._cursor.execute("SELECT byte_position FROM termBytePositions WHERE term=:term",
                              {'term': term})
         byte_pos = self._cursor.fetchone()
-        if not byte_pos:
-            print(f"Term {term} doesn't exist in termBytePositions")
+        # if not byte_pos:
+        #     print(f"Term {term} doesn't exist in termBytePositions")
 
         return byte_pos[0] if byte_pos else -1
