@@ -203,9 +203,9 @@ if __name__ == "__main__":
     print("Precisions: ", precisions)
     print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
-    average_precision = sum / total_relevant_documents
+    average_precision_default = sum / total_relevant_documents
 
-    print(f"Query: {query}Average precision: {average_precision} \n")
+    print(f"Query: {query}Average precision: {average_precision_default} \n")
 
     # Calculate the recall
     recalls = []
@@ -280,9 +280,9 @@ if __name__ == "__main__":
     print("Precisions: ", precisions)
     print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
-    average_precision = sum / total_relevant_documents
+    average_precision_okapi = sum / total_relevant_documents
 
-    print(f"Query: {query}Average precision: {average_precision} \n")
+    print(f"Query: {query}Average precision: {average_precision_okapi} \n")
 
     # Calculate the recall
     recalls = []
@@ -370,9 +370,9 @@ if __name__ == "__main__":
     print("Precisions: ", precisions)
     print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
-    average_precision = sum / total_relevant_documents
+    average_precision_traditional = sum / total_relevant_documents
 
-    print(f"Query: {query}Average precision: {average_precision} \n")
+    print(f"Query: {query}Average precision: {average_precision_traditional} \n")
 
     # Calculate the recall
     recalls = []
@@ -447,9 +447,9 @@ if __name__ == "__main__":
     print("Precisions: ", precisions)
     print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
-    average_precision = sum / total_relevant_documents
+    average_precision_wacky = sum / total_relevant_documents
 
-    print(f"Query: {query}Average precision: {average_precision} \n")
+    print(f"Query: {query}Average precision: {average_precision_wacky} \n")
 
     # Calculate the recall
     recalls = []
