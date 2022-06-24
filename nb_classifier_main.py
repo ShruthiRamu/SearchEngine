@@ -8,7 +8,7 @@ from indexes.positionalinvertedindex import PositionalInvertedIndex
 from text.englishtokenstream import EnglishTokenStream
 from text.newtokenprocessor import NewTokenProcessor
 from typing import List, Tuple
-from numpy import log as ln
+from numpy import log as ln, zeros
 from math import sqrt
 from pathlib import Path
 from heapq import nlargest
@@ -99,23 +99,43 @@ if __name__ == "__main__":
         author_index[author.lower()] = disk_index
         #print(f"{author} completed...")
 
+    # PART A Find T*
     print("Top 10 terms:")
     top_terms = select_features(author_index.values())
-    for terms in top_terms:
-        score, term = terms
+    for score_term in top_terms:
+        score, term = score_term
         print(f"Score: {score}, Term: {term}")
 
-    c_maps = [-1, -1, -1]
-    author_position = {}
-    top_terms_size = len(top_terms)
-    pos = 0
+    # PART B Training Prior Conditional Probability Calculation
+    # DENOMINATOR STORED IN ft_classes for each classes
+    author_idxs = {}
+    size_top_terms = len(top_terms)
+    ft_classes = zeros(len(authors)) # Store ftc in T* for each class
+    for score_term in top_terms:
+        _, term = score_term
+        idx = 0
+        for author, index in author_index.items():
+            # A list of postings
+            postings = index.get_postings(term)
+            dft = len(postings)
+            ft_classes[idx] += dft
+            author_idxs[author] = idx
+            idx += 1
+    ft_classes += size_top_terms
+
+    # NUMERATOR
     for author, index in author_index.items():
-        
-        df_term_accum = 0
-        for term in top_terms:
-            df_term = len(index.get_postings())
-            df_term_accum += df_term
-        df_term_accum += top_terms_size
+        numerator = 0 # Stores ftc + 1 for each class
+        # Vocab for each author
+        vocab = index.vocabulary()
+        for term in vocab:
+            postings = index.get_postings(term)
+            dft
+
+
+
+
+
 
 
 
