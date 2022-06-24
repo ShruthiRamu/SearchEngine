@@ -24,96 +24,6 @@ from struct import pack, unpack
 from heapq import nlargest
 
 
-# def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int, float, float):
-#     print("Indexing..")
-#     token_processor = NewTokenProcessor()
-#     index = PositionalInvertedIndex()
-#     biword_index = InvertedIndex()
-#     document_weights = []  # Ld for all documents in corpus
-#     document_tokens_length_per_document = []  # docLengthd - Number of tokens in a document
-#     document_tokens_length_total = 0  # total number of tokens in all the documents in corpus
-#     average_tftds = []  # ave(tftd) - average tftd count for a particular document
-#     byte_size_ds = []  # byteSized - number of bytes in the file for document d
-#     for d in corpus:
-#         # print("Processing the document: ", d)
-#         term_tftd = {}  # Term -> Term Frequency in a document
-#         stream = EnglishTokenStream(d.get_content())
-#         document_tokens_length_d = 0  # docLengthd - number of tokens in the document d
-#         position = 1
-#         # for token in stream:
-#         #     terms = token_processor.process_token(token)
-#         #     for term in terms:
-#         #         if term not in term_tftd.keys():
-#         #             term_tftd[term] = 0  # Initialization
-#         #         term_tftd[term] += 1
-#         #         # TODO: Add biword index
-#         #         index.add_term(term=term, position=position, doc_id=d.id)
-#         #     position += 1
-#         #     # number of tokens in document d
-#         #     document_tokens_length_d += 1
-#         current_terms = []
-#         next_terms = []
-#         for current, next in pairwise(stream):
-#             current_terms = token_processor.process_token(current)
-#             next_terms = token_processor.process_token(next)
-#             # Build positional index
-#             for term in current_terms:
-#                 if term not in term_tftd.keys():
-#                     term_tftd[term] = 0  # Initialization
-#                 term_tftd[term] += 1
-#                 index.add_term(term=term, position=position, doc_id=d.id)
-#             for term1, term2 in zip(current_terms, next_terms):
-#                 # concatenate the pair as a single term
-#                 biword_term = term1 + ' ' + term2
-#                 # Build biword index
-#                 # print("Biword term: ", biword_term)
-#                 biword_index.add_term(term=biword_term, doc_id=d.id)
-#             position += 1
-#             # number of tokens in document d
-#             document_tokens_length_d += 1
-#
-#         # Adding the final term
-#         for term in next_terms:
-#             if term not in term_tftd.keys():
-#                 term_tftd[term] = 0  # Initialization
-#             term_tftd[term] += 1
-#             index.add_term(term=term, position=position, doc_id=d.id)
-#         document_tokens_length_d += 1
-#
-#         Ld = 0
-#         for tftd in term_tftd.values():
-#             wdt = 1 + ln(tftd)
-#             wdt = wdt ** 2
-#             Ld += wdt
-#         Ld = sqrt(Ld)
-#         document_weights.append(Ld)
-#         # docLengthd - update the number of tokens for the document
-#         document_tokens_length_per_document.append(document_tokens_length_d)
-#         # update the sum of tokens in all documents
-#         document_tokens_length_total = document_tokens_length_total + document_tokens_length_d
-#
-#         # ave(tftd) - average tftd count for a particular document
-#         total_tftd = 0
-#         average_tftd = 0
-#         for tf in term_tftd.values():
-#             total_tftd += tf
-#         # print("Total tftd and len(term_tftf) for doc d: ", d.get_file_name(), total_tftd, len(term_tftd))
-#         # Handling empty files
-#         if total_tftd == 0 or len(term_tftd) == 0:
-#             average_tftds.append(average_tftd)
-#         else:
-#             average_tftd = total_tftd / len(term_tftd)
-#             average_tftds.append(average_tftd)
-#
-#         # byteSized - number of bytes in the file for document d
-#         byte_size_d = d.get_file_size()
-#         byte_size_ds.append(byte_size_d)
-#
-#     # docLengthA - average number of tokens in all documents in the corpus
-#     document_tokens_length_average = document_tokens_length_total / len(corpus)
-#     return index, biword_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average
-
-
 def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int, float, float):
     print("Indexing..")
     token_processor = NewTokenProcessor()
@@ -123,8 +33,8 @@ def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int,
     document_tokens_length_total = 0  # total number of tokens in all the documents in corpus
     average_tftds = []  # ave(tftd) - average tftd count for a particular document
     byte_size_ds = []  # byteSized - number of bytes in the file for document d
-    vd_d = {}  # to store the components of centroid vector for each document
-    vds = []  # List of list of vds [[vd1],[vd2]]
+    vd_d = {}  # to store the components for each document for each term
+    vds = []  # List of vd_d [[vd1],[vd2]]
     for d in corpus:
         # print("Processing the document: ", d)
         term_tftd = {}  # Term -> Term Frequency in a document
@@ -147,25 +57,21 @@ def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int,
             wdt = 1 + ln(tftd)
             # Update the components of the vector with wdt
             vd_d[t] = wdt
-            # print("Term: , wdt: ", t, wdt)
             wdt = wdt ** 2
             Ld += wdt
         Ld = sqrt(Ld)
-        # print("Ld: ", Ld)
+
         # find v(d)- normalized vector for the document
-        for t in vd_d.keys():  # zip(term_tftd.keys(), term_tftd.values()):
-            vd_d[t] = vd_d[t] / Ld
-            # print("Type: ", type(vd_d[t]))
-            # print("After the division, Term: , v(d): ", t, vd_d.get(t))
-
-        # print("For a document the VD: ", vd_d)
-
-        # square all the vd_d and add them to get 1
-        sum = 0
         for t in vd_d.keys():
-            sum += vd_d[t] ** 2
-        print("Sum: ", sum)  # The sum = 1.0001635188916558 is this okay??
+            vd_d[t] = vd_d[t] / Ld  # Neal gets this from disk index and also gets wdt from the disk postings(maybe
+            # do this in the main)
 
+        # square all the vd_d and add them to get 1 to verify
+        # sum = 0
+        # for t in vd_d.keys():
+        #     sum += vd_d[t] ** 2
+        # print("Sum: ", sum)  # The sum = 1.0001635188916558 is this okay??
+        #
         vds.append(vd_d)
 
         document_weights.append(Ld)
@@ -202,30 +108,30 @@ def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int,
     #     s = {k: vd[k] for k in sorted(vd)}
     #     sorted_vds.append(s)
 
-    # Add all the v(d) values of each document for a term
+    # Add all the v(d) values of each document for each term
     # result = dict(reduce(lambda x, y: Counter(x) + Counter(y), sorted_vds))
 
-    result = {}
+    # Add all the v(d) values for each term
+    centroid = {}
     for elm in vds:
         for k, v in elm.items():
 
             # Initialise it if it doesn't exist
-            if k not in result:
-                result[k] = 0
+            if k not in centroid:
+                centroid[k] = 0
 
             # accumulate sum separately
-            result[k] += v
+            centroid[k] += v
 
-    # print(result)
-
-    # print("After adding values: ", result)
+    # Dc is the length of the corpus of the class/folder
     Dc = len(corpus)
-    print(Dc)
-    # Divide by the Dc - the total number of documents in the corpus
-    for i in result:
-        result[i] = result[i] / 15
 
-    print("Final centroid: ", result)
+    # Divide by the Dc - the total number of documents in the corpus
+    for i in centroid:
+        centroid[i] = centroid[i] / Dc
+
+    print(f"Corpus: {corpus}, centroid: {centroid}")
+
     return index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average
 
 
@@ -260,6 +166,17 @@ if __name__ == "__main__":
     madison_index, madison_document_weights, madison_document_tokens_length_per_document, madison_byte_size_d, madison_average_tftd, \
     madison_document_tokens_length_average = index_corpus(madison_corpus)
 
+    # Calculate wdt for all the documents in the DISPUTED Directory
+    disputed_corpus_path = Path("federalist-papers/DISPUTED")
+    disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
+    disputed_index, disputed_document_weights, disputed_document_tokens_length_per_document, disputed_byte_size_d, disputed_average_tftd, \
+    disputed_document_tokens_length_average = index_corpus(disputed_corpus)
+
+    # TODO: Go through each document in the DISPUTED folder find the vector v(d) and finally find the euclidian length.
+    #  For each term in the document subtract the the centroid value and the disputed v(d) value
+    #  and add all them and find the square root for part B?? d ^ 2 = (centroid(t1)-vd(t1))^2+(centroid(t2)-vd(t2))^2...
+    #  Do this for each class
+
     hamilton_index_path = hamilton_corpus_path / "index"
     hamilton_index_path = hamilton_index_path.resolve()
     if not hamilton_index_path.is_dir():
@@ -274,9 +191,6 @@ if __name__ == "__main__":
     madison_index_path = madison_index_path.resolve()
     if not madison_index_path.is_dir():
         madison_index_path.mkdir()
-
-    # corpus_size = len(document_weights)
-    # corpus_size = len(list(corpus_path.glob("*.json")))
 
     hamilton_corpus_size = len(list(hamilton_corpus_path.glob("*.txt")))
     jay_corpus_size = len(list(jay_corpus_path.glob("*.txt")))
@@ -309,33 +223,31 @@ if __name__ == "__main__":
     if not madison_index_writer.posting_path.is_file():
         madison_index_writer.write_index(madison_index)
 
-    # To write the vocab for first time
-    vocab_list_path = hamilton_index_path / "vocab_list.txt"
-    vocab = hamilton_index.vocabulary()
-    with open(vocab_list_path, 'w') as f:
-        f.writelines('\n'.join(vocab))
-
-    # To write the vocab for first time
-    vocab_list_path = jay_index_path / "vocab_list.txt"
-    vocab = jay_index.vocabulary()
-    with open(vocab_list_path, 'w') as f:
-        f.writelines('\n'.join(vocab))
-
-    # To write the vocab for first time
-    vocab_list_path = madison_index_path / "vocab_list.txt"
-    vocab = madison_index.vocabulary()
-    with open(vocab_list_path, 'w') as f:
-        f.writelines('\n'.join(vocab))
-
+    # # To write the vocab for first time
+    # vocab_list_path = hamilton_index_path / "vocab_list.txt"
+    # vocab = hamilton_index.vocabulary()
+    # with open(vocab_list_path, 'w') as f:
+    #     f.writelines('\n'.join(vocab))
+    #
+    # # To write the vocab for first time
+    # vocab_list_path = jay_index_path / "vocab_list.txt"
+    # vocab = jay_index.vocabulary()
+    # with open(vocab_list_path, 'w') as f:
+    #     f.writelines('\n'.join(vocab))
+    #
+    # # To write the vocab for first time
+    # vocab_list_path = madison_index_path / "vocab_list.txt"
+    # vocab = madison_index.vocabulary()
+    # with open(vocab_list_path, 'w') as f:
+    #     f.writelines('\n'.join(vocab))
+    #
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 
+    # Always default here
     strategy = strategyMap.get(1)
     rankedStrategy = RankedStrategy(strategy)
 
-    # query = "new york univers"
-    # query = "Coral Reef"
-    # query = "camping in yosemite"
-    # query = "strenuous"
+    # TODO: Not sure what the query here would be or do we even need to do ranked retrieval here???
     query = "devils postpile"
 
     hamilton_disk_index = DiskPositionalIndex(hamilton_index_writer)
@@ -353,14 +265,28 @@ if __name__ == "__main__":
     # else:
     #     print("No vocabulary found")
 
-    # TODO: Here for the query[the whole file is the query], loop through each document/txt file in the disputed
+    # TODO: Here loop through each document/txt file in the disputed
     #  directory and find that docs normalized vector v(d) and get the difference |µ(c) − v(d)| for all the 3
-    #  centroids( classes). Return the smallest difference as the class. Print the class for each document.
+    #  centroids(classes). Find the euclidian length for part B
 
-    # accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
+    # TODO: For hamilton class find the centroid [Can I do it while creating the index in the index_corpus??]
+    # Say JAY has 3 documents d1, d2, d3
+    # Say all of the JAY's documents have 5 terms
+    # V(d1) = wdt1/Ld1, wdt2/Ld1, wdt3/Ld1, wdt4/Ld1, wdt5/Ld1
+    # V(d2) = wdt1/Ld2, wdt2/Ld2, wdt3/Ld2, wdt4/Ld2, wdt5/Ld2
+    # V(d3) = wdt1/Ld3, wdt2/Ld3, wdt3/Ld3, wdt4/Ld3, wdt5/Ld3
 
-    # TODO: For hamilton class find the centroid
-    # TODO: Loop through each text file in hamilton folder and query each file
+    # Here Dc = 3
+    # For JAY: Centroid = (wdt1/Ld1 + wdt1/Ld2 + wdt1/Ld3)/Dc, (wdt2/Ld1 + wdt2/Ld2 + wdt2/Ld3)/Dc,
+    # (wdt3/Ld1 + wdt3/Ld2 + wdt3/Ld3)/Dc, (wdt4/Ld1 + wdt4/Ld2 + wdt4/Ld3)/Dc, (wdt5/Ld1 + wdt5/Ld2 + wdt5/Ld3)/Dc
+
+    # TODO: Go through each document in the DISPUTED folder find the vector v(d) for it
+    #  and finally find the euclidian length.
+    #  For each term in the document subtract the the centroid value and the disputed v(d) or wdt value???
+    #  and add all them and find the square root for part B?? d ^ 2 = (centroid(t1)-vd(t1))^2+(centroid(t2)-vd(t2))^2...
+    #  Do this all 3 classes to get 3 values and smallest is the class that document belongs to.
+
+    # Default ranked retrieval strategy
     accumulator = {}
     N = hamilton_corpus_size
     token_processor = NewTokenProcessor()
@@ -378,7 +304,7 @@ if __name__ == "__main__":
             accumulator[posting.doc_id] += (wdt * wqt)
 
     for doc_id in accumulator.keys():
-        Ld = disk_index.get_doc_info(doc_id, "Ld")
+        Ld = hamilton_disk_index.get_doc_info(doc_id, "Ld")
         accumulator[doc_id] /= Ld
 
     # print("Returned value: ", accumulator)
@@ -388,5 +314,5 @@ if __name__ == "__main__":
     print(f"Top {K} documents for query: {query}")
     for k_documents in nlargest(K, heap):
         score, doc_id = k_documents
-        print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
+        print(f"Doc Title: {hamilton_corpus.get_document(doc_id).title}, Score: {score}")
         # print(f"Doc id: {doc_id}, Score: {score}")
