@@ -98,8 +98,8 @@ class DiskPositionalIndex(Index):
         # start_byte_position = self.disk_index_writer.b_tree[term]
         start_byte_position = self.disk_index_writer.get_byte_position(term)
         postings = []
-<<<<<<< Updated upstream
         # print(f"Start Byte Position Read: ", start_byte_position)
+        num_bytes = 1
         with open(self.disk_index_writer.posting_path, "rb") as f:
             # Handling missing terms to avoid errors, for precision and recall change
             if start_byte_position != -1:
@@ -124,7 +124,7 @@ class DiskPositionalIndex(Index):
                 doc_id = ord(f.read(num_bytes))
                 # pos += num_bytes
                 doc_id_arr = []
-=======
+
         if start_byte_position != -1:
             # Read from on-disk postings.bin index
             num_bytes = 1
@@ -137,7 +137,6 @@ class DiskPositionalIndex(Index):
                 dft_arr = []
 
                 # append all bits belonging to same number to array
->>>>>>> Stashed changes
                 while True:
                     if dft < 128:
                         dft_arr.append(dft)
