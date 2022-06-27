@@ -152,15 +152,27 @@ if __name__ == "__main__":
     ########################## Default ##############################
 
     print("\n############### DEFAULT STRATEGY ####################\n")
-    start = time_ns()
-    # For default strategy
-    accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
-    # TODO: Should we end the time here? or after the average precision calculation??
-    end = time_ns()
-    print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    mean_response_time = (end - start) / 1e+9
-    throughput = 1 / mean_response_time
-    print("Throughput: ", throughput)
+    throughput = 0
+    for iteration in range(0, 30):
+        start = time_ns()
+        # For default strategy
+        accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
+        # TODO: Should we end the time here? or after the average precision calculation??
+        end = time_ns()
+        # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        mean_response_time = (end - start) / 1e+9
+        throughput += 1 / mean_response_time
+    average_throughput = throughput/30
+    print(f"Average Throughput for 30 iterations: {average_throughput} queries/second")
+    # start = time_ns()
+    # # For default strategy
+    # accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
+    # # TODO: Should we end the time here? or after the average precision calculation??
+    # end = time_ns()
+    # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+    # mean_response_time = (end - start) / 1e+9
+    # throughput = 1 / mean_response_time
+    # print("Throughput: ", throughput)
 
     query_result_documents = []
 
@@ -229,14 +241,26 @@ if __name__ == "__main__":
     ############################## OKAPI Strategy ##############################################
 
     print("\n############### OKAPI STRATEGY ####################\n")
-    start = time_ns()
-    # For Okapi strategy
-    accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
-    end = time_ns()
-    print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    mean_response_time = (end - start) / 1e+9
-    throughput = 1 / mean_response_time
-    print("Throughput: ", throughput)
+    throughput = 0
+    for iteration in range(0, 30):
+        start = time_ns()
+        # For Okapi strategy
+        accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
+        # TODO: Should we end the time here? or after the average precision calculation??
+        end = time_ns()
+        # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        mean_response_time = (end - start) / 1e+9
+        throughput += 1 / mean_response_time
+    average_throughput = throughput/30
+    print(f"Average Throughput for 30 iterations: {average_throughput} queries/second")
+    # start = time_ns()
+    # # For Okapi strategy
+    # accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
+    # end = time_ns()
+    # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+    # mean_response_time = (end - start) / 1e+9
+    # throughput = 1 / mean_response_time
+    # print("Throughput: ", throughput)
 
     query_result_documents = []
 
