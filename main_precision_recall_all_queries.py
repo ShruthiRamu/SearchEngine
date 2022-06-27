@@ -213,250 +213,237 @@ if __name__ == "__main__":
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
-    MAP = total_average_precision/len(queries)
+    MAP = total_average_precision / len(queries)
     print(f"MAP: {MAP}")
 
-
     # ############################## OKAPI Strategy ##############################################
-    #
-    # print("\n############### OKAPI STRATEGY ####################\n")
-    # start = time_ns()
-    # # For Okapi strategy
-    # accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
-    # end = time_ns()
-    # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    # mean_response_time = (end - start) / 1e+9
-    # throughput = 1 / mean_response_time
-    # print("Throughput: ", throughput)
-    #
-    # query_result_documents = []
-    #
-    # K = 50
-    # heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-    # print(f"Top {K} documents for query: {query}")
-    # for k_documents in nlargest(K, heap):
-    #     score, doc_id = k_documents
-    #     # print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-    #     print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
-    #     query_result_documents.append(corpus.get_document(doc_id).get_file_name())
-    #     # print(f"Doc id: {doc_id}, Score: {score}")
-    #
-    # for i in range(0, len(query_result_documents)):
-    #     query_result_documents[i] = int(query_result_documents[i])
-    #
-    # # TODO: Calculate the average precision for the first query
-    # total_relevant_documents = len(relevant_document)
-    #
-    # # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
-    # print("\nRelevant documents found in the ranked retrieval query result: ")
-    # for document in query_result_documents:
-    #     if document in relevant_document:
-    #         print("Doc filename: ", document)
-    #
-    # # Calculate the precision
-    # precisions = []
-    #
-    # relevant_count = 0
-    # sum = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         precision = relevant_count / (i + 1)
-    #         # sum += relevant_count / (i + 1)
-    #         sum += precision
-    #         precisions.append(precision)
-    #     else:
-    #         precisions.append(relevant_count / (i + 1))
-    #
-    # print("Precisions: ", precisions)
-    # print("Sum: ", sum)
-    # # Divide by the total number of relevant documents for average precision for the query
-    # average_precision_okapi = sum / total_relevant_documents
-    #
-    # print(f"Query: {query}Average precision: {average_precision_okapi} \n")
-    #
-    # # Calculate the recall
-    # recalls = []
-    # relevant_count = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         recalls.append(relevant_count / total_relevant_documents)
-    #     else:
-    #         recalls.append(relevant_count / total_relevant_documents)
-    # print("Recall: ", recalls)
-    #
-    # # relevant_count = 1
-    # # sum = 0
-    # # for i in range(0, len(query_result_documents)):
-    # #     if query_result_documents[i] in relevant_document:
-    # #         sum += relevant_count / (i + 1)
-    # #         relevant_count += 1
-    # #
-    # # print("Sum: ", sum)
-    # # # Divide by the total number of relevant documents
-    # # average_precision = sum / total_relevant_documents
-    # #
-    # # print(f"Query: {query}Average precision: {average_precision} \n")
-    #
-    # plt.plot(recalls, precisions, label="Precision-Recall-Query1-Okapi", marker='o')
-    # plt.xlabel("Recall")
-    # plt.ylabel("Precision")
-    # plt.legend(loc="upper right")
-    # # TODO: Uncomment these when you want a new image
-    # # plt.show()
-    # plt.savefig('Precision-Recall-Curve-Okapi-Query1.png')
+
+    print("\n############### OKAPI STRATEGY ####################\n")
+    total_average_precision = 0
+
+    # loop through each query
+    for i in range(0, len(queries)):
+
+        # get the query i
+        query = queries[i]
+
+        # Relevant documents for the query i
+        relevant_document = relevant_documents[i].split()
+        for j in range(0, len(relevant_document)):
+            relevant_document[j] = int(relevant_document[j])
+
+        print("\n############### OKAPI STRATEGY ####################\n")
+        start = time_ns()
+        # For default strategy
+        accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
+        # TODO: Should we end the time here? or after the average precision calculation??
+        end = time_ns()
+        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        mean_response_time = (end - start) / 1e+9
+        throughput = 1 / mean_response_time
+        print("Throughput: ", throughput)
+
+        query_result_documents = []
+
+        K = 50
+        heap = [(score, doc_id) for doc_id, score in accumulator.items()]
+        print(f"Top {K} documents for query: {query}")
+        for k_documents in nlargest(K, heap):
+            score, doc_id = k_documents
+            # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+            query_result_documents.append(corpus.get_document(doc_id).get_file_name())
+
+        for j in range(0, len(query_result_documents)):
+            query_result_documents[j] = int(query_result_documents[j])
+
+        # TODO: Calculate the average precision for the first query
+        total_relevant_documents = len(relevant_document)
+
+        # print("\nRelevant documents found in the ranked retrieval query result: ")
+        # for document in query_result_documents:
+        #     if document in relevant_document:
+        #         print("Doc filename: ", document)
+
+        # Calculate the precision
+        precisions = []
+
+        relevant_count = 0
+        sum = 0
+        for j in range(0, len(query_result_documents)):
+            if query_result_documents[j] in relevant_document:
+                relevant_count += 1
+                precision = relevant_count / (j + 1)
+                # sum += relevant_count / (i + 1)
+                sum += precision
+                precisions.append(precision)
+            else:
+                precisions.append(relevant_count / (j + 1))
+        # print("Precisions: ", precisions)
+        # print("Sum: ", sum)
+
+        # Divide by the total number of relevant documents for average precision for the query
+        average_precision_default = sum / total_relevant_documents
+
+        total_average_precision += average_precision_default
+
+        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+
+    print("Total average precision: ", total_average_precision)
+    print("Total number of queries: ", len(queries))
+    MAP = total_average_precision / len(queries)
+    print(f"MAP: {MAP}")
 
     # ####################### Traditional-tf-idf ###################################
-    #
-    # print("\n############### TRADITIONAL STRATEGY ####################\n")
-    # start = time_ns()
-    # # For default strategy
-    # accumulator = rankedStrategy_traditional.calculate(query, disk_index, corpus_size)
-    # # TODO: Should we end the time here? or after the average precision calculation??
-    # end = time_ns()
-    # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    # mean_response_time = (end - start) / 1e+9
-    # throughput = 1 / mean_response_time
-    # print("Throughput: ", throughput)
-    #
-    # query_result_documents = []
-    #
-    # K = 50
-    # heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-    # print(f"Top {K} documents for query: {query}")
-    # for k_documents in nlargest(K, heap):
-    #     score, doc_id = k_documents
-    #     # print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-    #     print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
-    #     query_result_documents.append(corpus.get_document(doc_id).get_file_name())
-    #     # print(f"Doc id: {doc_id}, Score: {score}")
-    #
-    # for i in range(0, len(query_result_documents)):
-    #     query_result_documents[i] = int(query_result_documents[i])
-    #
-    # # TODO: Calculate the average precision for the first query
-    # total_relevant_documents = len(relevant_document)
-    #
-    # # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
-    # print("\nRelevant documents found in the ranked retrieval query result: ")
-    # for document in query_result_documents:
-    #     if document in relevant_document:
-    #         print("Doc filename: ", document)
-    #
-    # # Calculate the precision
-    # precisions = []
-    #
-    # relevant_count = 0
-    # sum = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         precision = relevant_count / (i + 1)
-    #         # sum += relevant_count / (i + 1)
-    #         sum += precision
-    #         precisions.append(precision)
-    #     else:
-    #         precisions.append(relevant_count / (i + 1))
-    # print("Precisions: ", precisions)
-    # print("Sum: ", sum)
-    # # Divide by the total number of relevant documents for average precision for the query
-    # average_precision_traditional = sum / total_relevant_documents
-    #
-    # print(f"Query: {query}Average precision: {average_precision_traditional} \n")
-    #
-    # # Calculate the recall
-    # recalls = []
-    # relevant_count = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         recalls.append(relevant_count / total_relevant_documents)
-    #     else:
-    #         recalls.append(relevant_count / total_relevant_documents)
-    # print("Recall: ", recalls)
-    #
-    # plt.plot(recalls, precisions, label="Precision-Recall-Query1-Traditional", marker='o')
-    # plt.xlabel("Recall")
-    # plt.ylabel("Precision")
-    # plt.legend(loc="upper right")
-    # # TODO: Uncomment these when you want a new image
-    # # plt.show()
-    # plt.savefig('Precision-Recall-Curve-Traditional-Query1.png')
-    #
+
+    print("\n############### TRADITIONAL STRATEGY ####################\n")
+    total_average_precision = 0
+
+    # loop through each query
+    for i in range(0, len(queries)):
+
+        # get the query i
+        query = queries[i]
+
+        # Relevant documents for the query i
+        relevant_document = relevant_documents[i].split()
+        for j in range(0, len(relevant_document)):
+            relevant_document[j] = int(relevant_document[j])
+
+        print("\n############### Traditional STRATEGY ####################\n")
+        start = time_ns()
+        # For default strategy
+        accumulator = rankedStrategy_traditional.calculate(query, disk_index, corpus_size)
+        # TODO: Should we end the time here? or after the average precision calculation??
+        end = time_ns()
+        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        mean_response_time = (end - start) / 1e+9
+        throughput = 1 / mean_response_time
+        print("Throughput: ", throughput)
+
+        query_result_documents = []
+
+        K = 50
+        heap = [(score, doc_id) for doc_id, score in accumulator.items()]
+        print(f"Top {K} documents for query: {query}")
+        for k_documents in nlargest(K, heap):
+            score, doc_id = k_documents
+            # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+            query_result_documents.append(corpus.get_document(doc_id).get_file_name())
+
+        for j in range(0, len(query_result_documents)):
+            query_result_documents[j] = int(query_result_documents[j])
+
+        # TODO: Calculate the average precision for the first query
+        total_relevant_documents = len(relevant_document)
+
+        # print("\nRelevant documents found in the ranked retrieval query result: ")
+        # for document in query_result_documents:
+        #     if document in relevant_document:
+        #         print("Doc filename: ", document)
+
+        # Calculate the precision
+        precisions = []
+
+        relevant_count = 0
+        sum = 0
+        for j in range(0, len(query_result_documents)):
+            if query_result_documents[j] in relevant_document:
+                relevant_count += 1
+                precision = relevant_count / (j + 1)
+                # sum += relevant_count / (i + 1)
+                sum += precision
+                precisions.append(precision)
+            else:
+                precisions.append(relevant_count / (j + 1))
+        # print("Precisions: ", precisions)
+        # print("Sum: ", sum)
+
+        # Divide by the total number of relevant documents for average precision for the query
+        average_precision_default = sum / total_relevant_documents
+
+        total_average_precision += average_precision_default
+
+        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+
+    print("Total average precision: ", total_average_precision)
+    print("Total number of queries: ", len(queries))
+    MAP = total_average_precision / len(queries)
+    print(f"MAP: {MAP}")
+
     # ####################### Wacky ###################################
-    #
-    # print("\n############### WACKY STRATEGY ####################\n")
-    # start = time_ns()
-    # # For default strategy
-    # accumulator = rankedStrategy_wacky.calculate(query, disk_index, corpus_size)
-    # # TODO: Should we end the time here? or after the average precision calculation??
-    # end = time_ns()
-    # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    # mean_response_time = (end - start) / 1e+9
-    # throughput = 1 / mean_response_time
-    # print("Throughput: ", throughput)
-    #
-    # query_result_documents = []
-    #
-    # K = 50
-    # heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-    # print(f"Top {K} documents for query: {query}")
-    # for k_documents in nlargest(K, heap):
-    #     score, doc_id = k_documents
-    #     # print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-    #     print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
-    #     query_result_documents.append(corpus.get_document(doc_id).get_file_name())
-    #     # print(f"Doc id: {doc_id}, Score: {score}")
-    #
-    # for i in range(0, len(query_result_documents)):
-    #     query_result_documents[i] = int(query_result_documents[i])
-    #
-    # # TODO: Calculate the average precision for the first query
-    # total_relevant_documents = len(relevant_document)
-    #
-    # # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
-    # print("\nRelevant documents found in the ranked retrieval query result: ")
-    # for document in query_result_documents:
-    #     if document in relevant_document:
-    #         print("Doc filename: ", document)
-    #
-    # # Calculate the precision
-    # precisions = []
-    #
-    # relevant_count = 0
-    # sum = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         precision = relevant_count / (i + 1)
-    #         # sum += relevant_count / (i + 1)
-    #         sum += precision
-    #         precisions.append(precision)
-    #     else:
-    #         precisions.append(relevant_count / (i + 1))
-    # print("Precisions: ", precisions)
-    # print("Sum: ", sum)
-    # # Divide by the total number of relevant documents for average precision for the query
-    # average_precision_wacky = sum / total_relevant_documents
-    #
-    # print(f"Query: {query}Average precision: {average_precision_wacky} \n")
-    #
-    # # Calculate the recall
-    # recalls = []
-    # relevant_count = 0
-    # for i in range(0, len(query_result_documents)):
-    #     if query_result_documents[i] in relevant_document:
-    #         relevant_count += 1
-    #         recalls.append(relevant_count / total_relevant_documents)
-    #     else:
-    #         recalls.append(relevant_count / total_relevant_documents)
-    # print("Recall: ", recalls)
-    #
-    # plt.plot(recalls, precisions, label="Precision-Recall-Query1-Wacky", marker='o')
-    # plt.xlabel("Recall")
-    # plt.ylabel("Precision")
-    # plt.legend(loc="upper right")
-    # # TODO: Uncomment these when you want a new image
-    # # plt.show()
-    # plt.savefig('Precision-Recall-Curve-Wacky-Query1.png')
+
+    print("\n############### WACKY STRATEGY ####################\n")
+    total_average_precision = 0
+
+    # loop through each query
+    for i in range(0, len(queries)):
+
+        # get the query i
+        query = queries[i]
+
+        # Relevant documents for the query i
+        relevant_document = relevant_documents[i].split()
+        for j in range(0, len(relevant_document)):
+            relevant_document[j] = int(relevant_document[j])
+
+        print("\n############### Wacky STRATEGY ####################\n")
+        start = time_ns()
+        # For default strategy
+        accumulator = rankedStrategy_wacky.calculate(query, disk_index, corpus_size)
+        # TODO: Should we end the time here? or after the average precision calculation??
+        end = time_ns()
+        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        mean_response_time = (end - start) / 1e+9
+        throughput = 1 / mean_response_time
+        print("Throughput: ", throughput)
+
+        query_result_documents = []
+
+        K = 50
+        heap = [(score, doc_id) for doc_id, score in accumulator.items()]
+        print(f"Top {K} documents for query: {query}")
+        for k_documents in nlargest(K, heap):
+            score, doc_id = k_documents
+            # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+            query_result_documents.append(corpus.get_document(doc_id).get_file_name())
+
+        for j in range(0, len(query_result_documents)):
+            query_result_documents[j] = int(query_result_documents[j])
+
+        # TODO: Calculate the average precision for the first query
+        total_relevant_documents = len(relevant_document)
+
+        # print("\nRelevant documents found in the ranked retrieval query result: ")
+        # for document in query_result_documents:
+        #     if document in relevant_document:
+        #         print("Doc filename: ", document)
+
+        # Calculate the precision
+        precisions = []
+
+        relevant_count = 0
+        sum = 0
+        for j in range(0, len(query_result_documents)):
+            if query_result_documents[j] in relevant_document:
+                relevant_count += 1
+                precision = relevant_count / (j + 1)
+                # sum += relevant_count / (i + 1)
+                sum += precision
+                precisions.append(precision)
+            else:
+                precisions.append(relevant_count / (j + 1))
+        # print("Precisions: ", precisions)
+        # print("Sum: ", sum)
+
+        # Divide by the total number of relevant documents for average precision for the query
+        average_precision_default = sum / total_relevant_documents
+
+        total_average_precision += average_precision_default
+
+        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+
+    print("Total average precision: ", total_average_precision)
+    print("Total number of queries: ", len(queries))
+    MAP = total_average_precision / len(queries)
+    print(f"MAP: {MAP}")
+
