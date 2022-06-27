@@ -21,6 +21,7 @@ class DiskIndexWriter:
 
     def __init__(self, index_path: Path, document_weights=[], docLengthd=[],
                  byteSized=[], average_tftd=[], document_tokens_length_average=[]):
+        self.index_path = index_path
         self.doc_weights_path = index_path / "docWeights.bin"
         self.posting_path = index_path / "postings.bin"
         self.term_byteposition_path = index_path / "term_byteposition.db"

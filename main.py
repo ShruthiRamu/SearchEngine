@@ -149,7 +149,7 @@ def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int,
     average_tftds = []  # ave(tftd) - average tftd count for a particular document
     byte_size_ds = []  # byteSized - number of bytes in the file for document d
     for d in corpus:
-        # print("Processing the document: ", d)
+        #print("Processing the document: ", d.id)
         term_tftd = {}  # Term -> Term Frequency in a document
         stream = EnglishTokenStream(d.get_content())
         document_tokens_length_d = 0  # docLengthd - number of tokens in the document d

@@ -18,7 +18,7 @@ def mutual_info(matrix, N):
     return sum(matrix * log_matrix) / N
 
 
-def select_features(indexes: List[Index], K=10):
+def select_features(indexes: List[Index], K):
     N = 0 # Total number of documents in all three indexes 
     vocab = []
     for index in indexes:
