@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 from diskindexwriter import DiskIndexWriter
 from documents.corpus import DocumentCorpus
@@ -138,6 +139,9 @@ if __name__ == "__main__":
     num_docs = len(list(disputed_corpus_path.glob("*.txt")))
     index_path = disputed_corpus_path / "index"
     index_path = index_path.resolve()
+
+    for txt_file in pathlib.Path('federalist-papers/DISPUTED').glob('*.txt'):
+        print(f"text files under disputed folder: {txt_file}")
 
     positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
         index_corpus(disputed_corpus)

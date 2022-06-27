@@ -205,80 +205,154 @@ if __name__ == "__main__":
                 print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
 
         elif option == 2:
-            print("Calculating MAP for all the 4 formulas....")
+            print("\nChoose a ranking strategy:")
+            print("1. Default")
+            print("2. Traditional(tf-idf)")
+            print("3. Okapi BM25")
+            print("4. Wacky")
+            choice = input(">> ")
+            strategy = strategyMap.get(int(choice))
+
+            rankedStrategy = RankedStrategy(strategy)
+
+            total_average_precision = 0
+
+            # loop through each query
+            for i in range(0, len(queries)):
+
+                # get the query i
+                query = queries[i]
+
+                # Relevant documents for the query i
+                relevant_document = relevant_documents[i].split()
+                for j in range(0, len(relevant_document)):
+                    relevant_document[j] = int(relevant_document[j])
+
+                accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
+
+                query_result_documents = []
+
+                K = 50
+                heap = [(score, doc_id) for doc_id, score in accumulator.items()]
+                # print(f"Top {K} documents for query: {query}")
+                for k_documents in nlargest(K, heap):
+                    score, doc_id = k_documents
+                    # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+                    query_result_documents.append(corpus.get_document(doc_id).get_file_name())
+
+                for j in range(0, len(query_result_documents)):
+                    query_result_documents[j] = int(query_result_documents[j])
+
+                total_relevant_documents = len(relevant_document)
+
+                # print("\nRelevant documents found in the ranked retrieval query result: ")
+                # for document in query_result_documents:
+                #     if document in relevant_document:
+                #         print("Doc filename: ", document)
+
+                # Calculate the precision
+                precisions = []
+
+                relevant_count = 0
+                sum = 0
+                for j in range(0, len(query_result_documents)):
+                    if query_result_documents[j] in relevant_document:
+                        relevant_count += 1
+                        precision = relevant_count / (j + 1)
+                        # sum += relevant_count / (i + 1)
+                        sum += precision
+                        precisions.append(precision)
+                    else:
+                        precisions.append(relevant_count / (j + 1))
+                # print("Precisions: ", precisions)
+                # print("Sum: ", sum)
+
+                # Divide by the total number of relevant documents for average precision for the query
+                average_precision_default = sum / total_relevant_documents
+
+                total_average_precision += average_precision_default
+
+                # print(f"Query: {query}Average precision: {average_precision_default} \n")
+
+            # print("Total average precision: ", total_average_precision)
+            # print("Total number of queries: ", len(queries))
+            MAP = total_average_precision / len(queries)
+            print(f"MAP: {MAP}")
+
+            # print("Calculating MAP for all the 4 formulas....")
             # For each formula calculate MAP
-            for strategy in strategyMap.values():
-
-                rankedStrategy = RankedStrategy(strategy)
-                if strategy == DefaultStrategy:
-                    name = "Default"
-                elif strategy == TraditionalStrategy:
-                    name = "Traditional"
-                elif strategy == OkapiBM25Strategy:
-                    name = "OKAPI BM25"
-                elif strategy == WackyStrategy:
-                    name = "Wacky"
-
-                total_average_precision = 0
-
-                # loop through each query
-                for i in range(0, len(queries)):
-
-                    # get the query i
-                    query = queries[i]
-
-                    # Relevant documents for the query i
-                    relevant_document = relevant_documents[i].split()
-                    for j in range(0, len(relevant_document)):
-                        relevant_document[j] = int(relevant_document[j])
-
-                    accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
-
-                    query_result_documents = []
-
-                    K = 50
-                    heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-                    # print(f"Top {K} documents for query: {query}")
-                    for k_documents in nlargest(K, heap):
-                        score, doc_id = k_documents
-                        # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
-                        query_result_documents.append(corpus.get_document(doc_id).get_file_name())
-
-                    for j in range(0, len(query_result_documents)):
-                        query_result_documents[j] = int(query_result_documents[j])
-
-                    total_relevant_documents = len(relevant_document)
-
-                    # print("\nRelevant documents found in the ranked retrieval query result: ")
-                    # for document in query_result_documents:
-                    #     if document in relevant_document:
-                    #         print("Doc filename: ", document)
-
-                    # Calculate the precision
-                    precisions = []
-
-                    relevant_count = 0
-                    sum = 0
-                    for j in range(0, len(query_result_documents)):
-                        if query_result_documents[j] in relevant_document:
-                            relevant_count += 1
-                            precision = relevant_count / (j + 1)
-                            # sum += relevant_count / (i + 1)
-                            sum += precision
-                            precisions.append(precision)
-                        else:
-                            precisions.append(relevant_count / (j + 1))
-                    # print("Precisions: ", precisions)
-                    # print("Sum: ", sum)
-
-                    # Divide by the total number of relevant documents for average precision for the query
-                    average_precision_default = sum / total_relevant_documents
-
-                    total_average_precision += average_precision_default
-
-                    # print(f"Query: {query}Average precision: {average_precision_default} \n")
-
-                # print("Total average precision: ", total_average_precision)
-                # print("Total number of queries: ", len(queries))
-                MAP = total_average_precision / len(queries)
-                print(f"Formula: {name}, MAP: {MAP}")
+            # for strategy in strategyMap.values():
+            #
+            #     rankedStrategy = RankedStrategy(strategy)
+            #     if strategy == DefaultStrategy:
+            #         name = "Default"
+            #     elif strategy == TraditionalStrategy:
+            #         name = "Traditional"
+            #     elif strategy == OkapiBM25Strategy:
+            #         name = "OKAPI BM25"
+            #     elif strategy == WackyStrategy:
+            #         name = "Wacky"
+            #
+            #     total_average_precision = 0
+            #
+            #     # loop through each query
+            #     for i in range(0, len(queries)):
+            #
+            #         # get the query i
+            #         query = queries[i]
+            #
+            #         # Relevant documents for the query i
+            #         relevant_document = relevant_documents[i].split()
+            #         for j in range(0, len(relevant_document)):
+            #             relevant_document[j] = int(relevant_document[j])
+            #
+            #         accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
+            #
+            #         query_result_documents = []
+            #
+            #         K = 50
+            #         heap = [(score, doc_id) for doc_id, score in accumulator.items()]
+            #         # print(f"Top {K} documents for query: {query}")
+            #         for k_documents in nlargest(K, heap):
+            #             score, doc_id = k_documents
+            #             # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+            #             query_result_documents.append(corpus.get_document(doc_id).get_file_name())
+            #
+            #         for j in range(0, len(query_result_documents)):
+            #             query_result_documents[j] = int(query_result_documents[j])
+            #
+            #         total_relevant_documents = len(relevant_document)
+            #
+            #         # print("\nRelevant documents found in the ranked retrieval query result: ")
+            #         # for document in query_result_documents:
+            #         #     if document in relevant_document:
+            #         #         print("Doc filename: ", document)
+            #
+            #         # Calculate the precision
+            #         precisions = []
+            #
+            #         relevant_count = 0
+            #         sum = 0
+            #         for j in range(0, len(query_result_documents)):
+            #             if query_result_documents[j] in relevant_document:
+            #                 relevant_count += 1
+            #                 precision = relevant_count / (j + 1)
+            #                 # sum += relevant_count / (i + 1)
+            #                 sum += precision
+            #                 precisions.append(precision)
+            #             else:
+            #                 precisions.append(relevant_count / (j + 1))
+            #         # print("Precisions: ", precisions)
+            #         # print("Sum: ", sum)
+            #
+            #         # Divide by the total number of relevant documents for average precision for the query
+            #         average_precision_default = sum / total_relevant_documents
+            #
+            #         total_average_precision += average_precision_default
+            #
+            #         # print(f"Query: {query}Average precision: {average_precision_default} \n")
+            #
+            #     # print("Total average precision: ", total_average_precision)
+            #     # print("Total number of queries: ", len(queries))
+            #     MAP = total_average_precision / len(queries)
+            #     print(f"Formula: {name}, MAP: {MAP}")
