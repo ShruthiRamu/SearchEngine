@@ -64,7 +64,8 @@ class DefaultStrategy(IRankedStrategy):
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             # postings = disk_index.get_postings(term)
             dft = len(postings)
-            wqt = ln(1 + N / dft)
+            if dft != 0:
+                wqt = ln(1 + N / dft)
 
             for posting in postings:
                 wdt = 1 + ln(posting.tftd)
@@ -93,7 +94,8 @@ class TraditionalStrategy(IRankedStrategy):
             tokenized_term = TermLiteral(term, False, mode='rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
-            wqt = ln(N / dft)
+            if dft != 0:
+                wqt = ln(N / dft)
 
             for posting in postings:
                 wdt = posting.tftd
@@ -123,7 +125,8 @@ class OkapiBM25Strategy(IRankedStrategy):
             tokenized_term = TermLiteral(term, False, mode='rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
-            wqt = max(0.1, ln((N - dft + 0.5) / (dft + 0.5)))
+            if dft != 0:
+                wqt = max(0.1, ln((N - dft + 0.5) / (dft + 0.5)))
 
             for posting in postings:
                 docLength = disk_index.get_doc_info(posting.doc_id, "docLength")
@@ -155,7 +158,8 @@ class WackyStrategy(IRankedStrategy):
             tokenized_term = TermLiteral(term, False, 'rank')
             postings = tokenized_term.get_postings(disk_index, token_processor=token_processor)
             dft = len(postings)
-            wqt = max(0, ln((N - dft) / dft))
+            if dft != 0:
+                wqt = max(0, ln((N - dft) / dft))
 
             for posting in postings:
                 average_tftd = disk_index.get_doc_info(posting.doc_id, "avg_tftd")

@@ -103,7 +103,7 @@ if __name__ == "__main__":
     if not index_writer.posting_path.is_file():
         index_writer.write_index(index)
 
-    disk_index = DiskPositionalIndex(index_writer)
+    disk_index = DiskPositionalIndex(index_writer, num_docs=corpus_size)
 
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 

@@ -102,7 +102,7 @@ if __name__ == "__main__":
     if not index_writer.posting_path.is_file():
         index_writer.write_index(index)
 
-    disk_index = DiskPositionalIndex(index_writer)
+    disk_index = DiskPositionalIndex(index_writer, num_docs=corpus_size)
 
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 
@@ -202,19 +202,19 @@ if __name__ == "__main__":
             else:
                 precisions.append(relevant_count / (j + 1))
         # print("Precisions: ", precisions)
-        print("Sum: ", sum)
+        # print("Sum: ", sum)
 
         # Divide by the total number of relevant documents for average precision for the query
         average_precision_default = sum / total_relevant_documents
 
         total_average_precision += average_precision_default
 
-        print(f"Query: {query}Average precision: {average_precision_default} \n")
+        # print(f"Query: {query}Average precision: {average_precision_default} \n")
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
     MAP = total_average_precision/len(queries)
-    print("MAP: ", MAP)
+    print(f"MAP: {MAP}")
 
 
     # ############################## OKAPI Strategy ##############################################
@@ -306,7 +306,7 @@ if __name__ == "__main__":
     # # TODO: Uncomment these when you want a new image
     # # plt.show()
     # plt.savefig('Precision-Recall-Curve-Okapi-Query1.png')
-    #
+
     # ####################### Traditional-tf-idf ###################################
     #
     # print("\n############### TRADITIONAL STRATEGY ####################\n")
