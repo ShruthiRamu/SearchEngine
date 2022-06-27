@@ -78,8 +78,8 @@ def index_corpus(corpus: DocumentCorpus) -> Tuple[Index, List[float], List[int],
 
 if __name__ == "__main__":
     corpus_dir = Path('federalist-papers2')
-    doc_list = []
 
+    doc_list = []
     doc_count = 1
     while doc_count < 86:
 
@@ -160,6 +160,7 @@ if __name__ == "__main__":
 
         distances = ()
         distance = 0
+        term_log = {}
         for key, value in vd_disputed.items():
             # Get the first value for the term from nondisputed document
             if not vd_nondisputed.get(key):
@@ -177,15 +178,39 @@ if __name__ == "__main__":
 
             # add it to the final result
             distance += squared_difference
+
+            # mark as already compared
+            term_log[key] = True
+
+        for key, value in vd_nondisputed.items():
+            # Get the first value for the term from nondisputed document
+            if term_log.get(key):
+                continue
+            if not vd_disputed.get(key):
+                first_value = 0
+            else:
+                first_value = vd_disputed.get(key)
+            # Get the second value for the term from the v(d) of disputed document
+            second_value = value
+
+            # Subtract the values
+            difference = first_value - second_value
+
+            # square the difference
+            squared_difference = difference ** 2
+
+            # add it to the final result
+            distance += squared_difference
+
         distance = sqrt(distance)
         distances = (doc_count, distance)
         doc_list.append(distances)
         doc_count += 1
 
-    lowest = (0,1)
+    lowest = (0, 1)
     for i in doc_list:
-        # if i[1] < lowest[1]:
-        #    lowest = i
+        if i[1] < lowest[1]:
+            lowest = i
         print(i)
 
-    #print(lowest)
+    print("lowest:" + str(lowest))
