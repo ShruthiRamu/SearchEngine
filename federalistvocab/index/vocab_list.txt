@@ -2,6 +2,7 @@
 1
 10
 11
+12
 128
 13
 136
@@ -21,6 +22,7 @@
 1808
 181
 186
+19
 195
 1abb
 1st
@@ -62,6 +64,7 @@ a
 abandon
 abat
 abet
+abhorr
 abil
 abl
 ablest
@@ -77,6 +80,7 @@ abridg
 abroad
 abrog
 absenc
+abserv
 absolut
 absolv
 absorb
@@ -88,6 +92,7 @@ abund
 abus
 abyss
 acced
+acceler
 accept
 access
 accid
@@ -99,6 +104,7 @@ accomplish
 accord
 account
 accret
+accru
 accumul
 accur
 accuraci
@@ -206,6 +212,7 @@ alien
 alik
 alim
 all
+allb
 alleg
 allegi
 allevi
@@ -261,11 +268,14 @@ analog
 analyz
 anarchi
 ancestor
+anchor
 ancient
 and
 anew
+angel
 angl
 angri
+anguish
 ani
 anim
 animadvers
@@ -285,10 +295,13 @@ answer
 antagonist
 anteced
 anterior
+anti
 anticip
 antidot
+antifeder
 antipathi
 antiqu
+antiquari
 antirepublican
 anxieti
 anxious
@@ -315,6 +328,7 @@ applic
 appoint
 apport
 apportion
+apposit
 appreci
 apprehend
 apprehens
@@ -332,7 +346,9 @@ arbit
 arbitrari
 arbitrarili
 archiv
+archon
 ardent
+ardor
 arduous
 are
 area
@@ -450,6 +466,7 @@ awe
 awhil
 awkward
 axiom
+back
 bad
 baffl
 bait
@@ -514,6 +531,7 @@ benefici
 benefit
 benevol
 benign
+bent
 bereav
 beset
 besid
@@ -565,6 +583,7 @@ book
 border
 bore
 born
+borough
 borrow
 bosom
 both
@@ -616,6 +635,7 @@ bulk
 bulwark
 burden
 burdensom
+burgh
 burst
 busi
 but
@@ -627,6 +647,7 @@ cabinet
 caesar
 calam
 calamati
+calamit
 calcul
 call
 calm
@@ -684,6 +705,7 @@ celebr
 celer
 cement
 censor
+censori
 censur
 census
 cent
@@ -704,6 +726,7 @@ chanc
 chancellor
 chanceri
 chang
+changeabl
 channel
 channl
 chap
@@ -743,6 +766,7 @@ circumscrib
 circumspect
 circumst
 circumstanc
+circumstanti
 citadel
 cite
 citi
@@ -789,12 +813,14 @@ coin
 coinag
 coincid
 cold
+collater
 collect
 collector
 collis
 collus
 coloni
 color
+column
 combat
 combin
 combust
@@ -825,6 +851,7 @@ commonwealth
 commot
 commuiti
 commun
+communion
 compact
 compani
 companion
@@ -1004,6 +1031,7 @@ correct
 correspond
 corrobor
 corrupt
+cosmi
 cost
 could
 council
@@ -1050,6 +1078,7 @@ critic
 criticis
 cromwel
 crop
+crowd
 crown
 crown,5
 crude
@@ -1061,6 +1090,7 @@ culumni
 cun
 cupid
 cure
+curios
 curious
 currenc
 current
@@ -1069,6 +1099,7 @@ curtail
 custom
 customari
 daili
+damp
 danger
 dare
 dark
@@ -1082,6 +1113,7 @@ de
 dead
 deal
 dealer
+dealt
 dear
 dearbought
 dearest
@@ -1135,6 +1167,7 @@ definit
 deform
 defray
 degener
+degeneraci
 degrad
 degre
 deign
@@ -1190,6 +1223,7 @@ depriv
 deput
 deputi
 derelict
+deris
 deriv
 derog
 des
@@ -1315,6 +1349,7 @@ dismember
 dismiss
 disobedi
 disord
+dispar
 dispassion
 dispens
 dispers
@@ -1324,6 +1359,7 @@ displeas
 displeasur
 dispos
 disposit
+dispossess
 disproport
 disproportion
 disprov
@@ -1388,6 +1424,7 @@ doom
 door
 dor
 doubl
+doubli
 doubt
 doubtless
 down
@@ -1395,10 +1432,12 @@ downfal
 dozen
 draco
 drag
+draught
 draw
 drawn
 dread
 dream
+drew
 drive
 driven
 drop
@@ -1417,6 +1456,7 @@ dutch
 duti
 dwell
 dwindl
+e
 each
 eager
 ear
@@ -1440,6 +1480,8 @@ ed
 edg
 edific
 edit
+educ
+effac
 effect
 effectu
 efficaci
@@ -1535,6 +1577,7 @@ enorm
 enough
 enrich
 enslav
+ensnar
 ensu
 entail
 entangl
@@ -1553,6 +1596,7 @@ envelop
 envi
 environ
 envoy
+ephori
 epic
 epidem
 epithet
@@ -1631,6 +1675,7 @@ excresc
 excus
 execr
 execut
+exemplari
 exemplif
 exemplifi
 exempt
@@ -1681,6 +1726,7 @@ extermin
 extern
 extinct
 extinguish
+extirp
 extort
 extra
 extract
@@ -1703,6 +1749,7 @@ facto
 faculti
 fail
 failur
+faint
 fair
 fairer
 fairest
@@ -1755,6 +1802,7 @@ female,6
 fenc
 ferment
 fertil
+fervent
 fetch
 fetter
 feud
@@ -1774,6 +1822,7 @@ fifteen
 fifteenth
 fifth
 fifti
+fiftyeight
 fiftynin
 fight
 figur
@@ -1799,6 +1848,7 @@ flame
 flander
 flank
 flatter
+flatteri
 fleet
 fleetlet
 fli
@@ -1882,8 +1932,10 @@ fraudul
 fraught
 free
 freedom
+freehold
 freeli
 freer
+freest
 freight
 french
 frequenc
@@ -1904,6 +1956,7 @@ frustrat
 fugit
 fulfil
 full
+fuller
 fullest
 fullgrown
 fulli
@@ -1936,6 +1989,7 @@ geograph
 geometr
 geometri
 geometrician
+georg
 georgia
 germ
 german
@@ -1974,10 +2028,13 @@ governmentswhat
 governor
 gradat
 grade
+gradnal
 gradual
 grand
 grant
+grantor
 grasp
+grate
 gratif
 gratifi
 gratitud
@@ -2005,6 +2062,7 @@ guarded.1
 guardian
 guardianship
 guardth
+guess
 guid
 guilt
 guilti
@@ -2016,12 +2074,14 @@ habitu
 had
 halcyon
 half
+halfyear
 hampshir
 hand
 handl
 handmaid
 hang
 hannib
+hanoverian
 happen
 happi
 happili
@@ -2065,6 +2125,7 @@ heir
 held
 helm
 help
+hemlock
 henc
 henri
 her
@@ -2121,6 +2182,7 @@ hundr
 hundredth
 hurri
 husbandman
+husbandmen
 hydra
 hypocrisi
 hypothesi
@@ -2139,6 +2201,7 @@ ignobl
 ignomini
 ignor
 ii
+iii
 ill
 illadministr
 illconstitut
@@ -2183,6 +2246,7 @@ impel
 impend
 impenetr
 impera1
+impercept
 imperfect
 imperi
 imperio
@@ -2229,6 +2293,7 @@ inapplic
 inaptitud
 inasmuch
 inattent
+inaugur
 inauspici
 incap
 incapac
@@ -2237,6 +2302,7 @@ incauti
 incendiari
 incens
 incent
+incess
 incid
 incit
 inclin
@@ -2267,6 +2333,7 @@ indebt
 indefatig
 indefens
 indefinit
+indel
 indemn
 independ
 indetermin
@@ -2293,6 +2360,7 @@ induc
 indulg
 industri
 ineffectu
+inefficaci
 ineffici
 inelig
 inequ
@@ -2331,6 +2399,7 @@ infus
 ingeni
 ingenu
 ingraft
+ingratitud
 ingredi
 inhabit
 inher
@@ -2465,6 +2534,7 @@ involv
 invulner
 ireland
 irferior
+irish
 irksom
 iron
 irrat
@@ -2509,6 +2579,7 @@ joint
 journal
 journey
 judg
+judgem
 judgment
 judic
 judicari
@@ -2587,6 +2658,7 @@ lavish
 law
 lawa
 lawgiv
+lawless
 lawmak
 lawrenc
 lawyer
@@ -2599,8 +2671,10 @@ leagu
 league,9
 lean
 learn
+learnt
 least
 leav
+leaven
 led
 left
 legal
@@ -2649,6 +2723,7 @@ light,i
 like
 likelihood
 likewis
+limb
 limit
 line
 linen
@@ -2674,6 +2749,7 @@ lolm
 long
 longer
 longest
+longliv
 look
 loos
 lord
@@ -2771,6 +2847,7 @@ meantim
 measur
 mechan
 mediat
+mediocr
 medit
 medium
 meet
@@ -2854,6 +2931,7 @@ mislead
 mismanag
 misplac
 misrepresent
+misrul
 mission
 mississippi
 misstep
@@ -2883,6 +2961,7 @@ monarchi
 monday
 money
 monitor
+monitori
 monopol
 monopoli
 monster
@@ -2933,6 +3012,7 @@ narrow
 narrowest
 narrowli
 nation
+nativ
 natur
 naturalist
 naval
@@ -2954,6 +3034,7 @@ negat
 neglect
 negoci
 negoti
+negro
 neighbor
 neighborhood
 neighbors.11
@@ -3048,6 +3129,7 @@ occur
 occurr
 ocean
 ocnsent
+octenni
 odious
 odium
 of
@@ -3085,6 +3167,7 @@ option
 opul
 or
 oracl
+oral
 orang
 orat
 orb
@@ -3110,6 +3193,7 @@ outlin
 outliv
 outnumb
 outrag
+outset
 outweigh
 over
 overbal
@@ -3282,6 +3366,7 @@ piraci
 pirat
 pitch
 piti
+pivot
 place
 plain
 plainer
@@ -3289,6 +3374,7 @@ plainest
 plaintiff
 plan
 plant
+plato
 plausibl
 play
 plea
@@ -3298,6 +3384,7 @@ pleasur
 plebeian
 plebian
 pledg
+plenipotentiari
 plenti
 plentitud
 plianci
@@ -3323,6 +3410,7 @@ politi
 politician
 poll
 polltax
+polybius
 pomp
 pompadour
 poor
@@ -3355,6 +3443,7 @@ powers.2
 powers:1
 practic
 praetor
+prais
 prayer
 pre
 precari
@@ -3429,12 +3518,14 @@ primari
 primarili
 primat
 prime
+primev
 primit
 princ
 princip
 principl
 print
 prior
+prioriti
 pristin
 privaci
 privat
@@ -3485,6 +3576,7 @@ proper
 propermean
 properti
 prophesi
+prophet
 proport
 proportion
 proportion.1
@@ -3508,6 +3600,7 @@ protector
 protest
 protract
 prove
+proverbi
 provid
 provinc
 provis
@@ -3525,6 +3618,7 @@ publish
 publius
 puls
 punctual
+punic
 punish
 purchas
 pure
@@ -3655,12 +3749,15 @@ refrain
 refug
 refus
 refut
+regain
 regard
+regener
 reget
 region
 regret
 regul
 regular
+regulati
 reign
 rein
 reinforc
@@ -3784,6 +3881,8 @@ rhetor
 rhetorician
 rhode
 rich
+richer
+richest
 rid
 ridicul
 right
@@ -3940,6 +4039,7 @@ sentim
 sentinel
 separ
 septemb
+septenni
 sequel
 seraglio
 seri
@@ -3948,6 +4048,7 @@ serv
 servant
 servic
 servil
+servitud
 session
 set
 settl
@@ -3955,6 +4056,7 @@ settlem
 seven
 seventh
 seventi
+seventynin
 seventythre
 sever
 sex
@@ -3983,6 +4085,8 @@ shoot
 shore
 short
 shorten
+shorter
+shortest
 shortliv
 should
 show
@@ -4008,6 +4112,7 @@ simpl
 simplest
 simpli
 simplic
+simplifi
 sinc
 sincer
 sinew
@@ -4016,6 +4121,7 @@ singl
 singular
 sinist
 sink
+sister
 sit
 situat
 six
@@ -4050,6 +4156,7 @@ soar
 sober
 social
 societi
+socrat
 soften
 soil
 soldier
@@ -4123,9 +4230,11 @@ spot
 spread
 spring
 sprung
+spurious
 squar
 squeez
 stabil
+stabl
 stage
 stagnat
 stake
@@ -4152,9 +4261,12 @@ statut
 stead
 steadi
 steadili
+steal
 steer
 step
+sterl
 stern
+steward
 stifl
 stigma
 stigmat
@@ -4174,6 +4286,7 @@ storestar
 stori
 storm
 straight
+strain
 strang
 stranger
 strangl
@@ -4204,6 +4317,7 @@ subdivid
 subdivis
 subdu
 subject
+subjoin
 submiss
 submit
 subordin
@@ -4238,6 +4352,7 @@ sum
 summari
 summit
 summon
+sun
 sunk
 superad
 superannu
@@ -4296,11 +4411,13 @@ sycoph
 syllabl
 syllogist
 symmetri
+sympath
 sympathi
 symptom
 system
 systemat
 t
+tabil
 tacit
 taint
 take
@@ -4312,6 +4429,7 @@ tame
 tamoni
 tamper
 tar
+tariff
 tarnish
 tartari
 task
@@ -4409,6 +4527,7 @@ thunder
 thursday
 thus
 thwart
+ticklish
 tide
 tie
 till
@@ -4509,8 +4628,10 @@ tutelag
 twelv
 twenti
 twentieth
+twentyeight
 twentyf
 twentyfifth
+twentyon
 twentythre
 twice
 two
@@ -4538,6 +4659,7 @@ unauthor
 unavail
 unavoid
 unaw
+unawar
 unbecom
 unbias
 unblush
@@ -4571,6 +4693,7 @@ understood
 undertak
 undertaken
 undertook
+undervalu
 undesir
 undiminish
 undisciplin
@@ -4582,6 +4705,7 @@ undoubt
 undu
 unduli
 uneasi
+unenlighten
 unenumer
 unequ
 unequivoc
@@ -4590,6 +4714,7 @@ unexception
 unexpect
 unexplor
 unfair
+unfaith
 unfathom
 unfavor
 unfett
@@ -4607,6 +4732,7 @@ unhappili
 unheard
 unhing
 uniform
+unimport
 unimprov
 uninfluenc
 uninterest
@@ -4744,6 +4870,7 @@ veil
 vein
 venal
 venalti
+vendibl
 vener
 vengeanc
 venial
@@ -4810,6 +4937,7 @@ voluptu
 vortex
 votari
 vote
+voter
 vouch
 voucher
 voyag
@@ -4846,6 +4974,7 @@ weal
 wealth
 wealthi
 wealthiest
+wean
 weapon
 wear
 weari
@@ -4861,6 +4990,8 @@ welfar
 well
 wellbalanc
 wellborn
+wellchosen
+wellconnect
 wellconstitut
 wellconstruct
 welldigest
@@ -4868,6 +4999,7 @@ welldirect
 wellestablish
 wellfound
 wellground
+wellguard
 wellinform
 wellintent
 wellknown
@@ -4917,6 +5049,7 @@ wild
 wildest
 wile
 will
+william
 win
 wing
 wisdom
@@ -4946,11 +5079,13 @@ world
 worn
 wors
 worst
+worth
 worthi
 would
 wound
 wreak
 wreck
+wrest
 wretch
 writ
 write
