@@ -182,7 +182,7 @@ if __name__ == "__main__":
     for k_documents in nlargest(K, heap):
         score, doc_id = k_documents
         # print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-        print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+        # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
         query_result_documents.append(corpus.get_document(doc_id).get_file_name())
         # print(f"Doc id: {doc_id}, Score: {score}")
 
@@ -193,10 +193,12 @@ if __name__ == "__main__":
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
-    print("\nRelevant documents found in the ranked retrieval query result: ")
+    # print("\nRelevant documents found in the ranked retrieval query result: ")
     for document in query_result_documents:
         if document in relevant_document:
-            print("Doc filename: ", document)
+            print(f"Relevant: ", document)
+        else:
+            print(f"Non-Relevant: {document}")
 
     # Calculate the precision
     precisions = []
@@ -212,12 +214,12 @@ if __name__ == "__main__":
             precisions.append(precision)
         else:
             precisions.append(relevant_count / (i + 1))
-    print("Precisions: ", precisions)
-    print("Sum: ", sum)
+    #print("Precisions: ", precisions)
+    #print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
     average_precision_default = sum / total_relevant_documents
 
-    print(f"Query: {query}Average precision: {average_precision_default} \n")
+    print(f"Query: {query}Average precision: {average_precision_default}\n")
 
     # Calculate the recall
     recalls = []
@@ -228,7 +230,7 @@ if __name__ == "__main__":
             recalls.append(relevant_count / total_relevant_documents)
         else:
             recalls.append(relevant_count / total_relevant_documents)
-    print("Recall: ", recalls)
+    #print("Recall: ", recalls)
 
     plt.plot(recalls, precisions, label="Precision-Recall-Query1-Default", marker='o')
     plt.xlabel("Recall")
@@ -270,7 +272,7 @@ if __name__ == "__main__":
     for k_documents in nlargest(K, heap):
         score, doc_id = k_documents
         # print(f"Doc Title: {corpus.get_document(doc_id).title}, Score: {score}")
-        print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
+        # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
         query_result_documents.append(corpus.get_document(doc_id).get_file_name())
         # print(f"Doc id: {doc_id}, Score: {score}")
 
@@ -281,10 +283,12 @@ if __name__ == "__main__":
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
-    print("\nRelevant documents found in the ranked retrieval query result: ")
+    # print("\nRelevant documents found in the ranked retrieval query result: ")
     for document in query_result_documents:
         if document in relevant_document:
-            print("Doc filename: ", document)
+            print(f"Relevant:{document}")
+        else:
+            print(f"Non-Relevant:{document}")
 
     # Calculate the precision
     precisions = []
@@ -301,8 +305,8 @@ if __name__ == "__main__":
         else:
             precisions.append(relevant_count / (i + 1))
 
-    print("Precisions: ", precisions)
-    print("Sum: ", sum)
+    #print("Precisions: ", precisions)
+    #print("Sum: ", sum)
     # Divide by the total number of relevant documents for average precision for the query
     average_precision_okapi = sum / total_relevant_documents
 
@@ -317,7 +321,7 @@ if __name__ == "__main__":
             recalls.append(relevant_count / total_relevant_documents)
         else:
             recalls.append(relevant_count / total_relevant_documents)
-    print("Recall: ", recalls)
+    #print("Recall: ", recalls)
 
     # relevant_count = 1
     # sum = 0

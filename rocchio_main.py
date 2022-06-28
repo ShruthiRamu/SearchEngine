@@ -130,18 +130,19 @@ if __name__ == "__main__":
             centroid[term] = vd.get(term) / index.num_docs
             centroids[author.lower()] = centroid
 
-        print(f"Author: {author}, Centroid: {centroids[author.lower()]}\n")
+        # print(f"Author: {author}, Centroid: {centroids[author.lower()]}\n")
 
     # TODO: Do this for each document. Do we need to create disk_index for each document??
     # Create v(d) for disputed documents
-    disputed_corpus_path = Path("dummy-disputed")
+    # disputed_corpus_path = Path("dummy-disputed")
+    disputed_corpus_path = Path("dummy-disputed-rocchio")
     disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
     num_docs = len(list(disputed_corpus_path.glob("*.txt")))
     index_path = disputed_corpus_path / "index"
     index_path = index_path.resolve()
 
-    for txt_file in pathlib.Path('federalist-papers/DISPUTED').glob('*.txt'):
-        print(f"text files under disputed folder: {txt_file}")
+    # for txt_file in pathlib.Path('federalist-papers/DISPUTED').glob('*.txt'):
+    #     print(f"text files under disputed folder: {txt_file}")
 
     positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
         index_corpus(disputed_corpus)
@@ -169,6 +170,9 @@ if __name__ == "__main__":
             # Update the components for the term
             vd_disputed[term] = wdt / Ld
 
+    # the first 30 components (alphabetically) of the normalized vector for the document
+    print(f"\nthe first 30 components (alphabetically) of the normalized vector for the document:{list(vd_disputed.items())[:30]}")
+
     # find euclidian distance for the disputed document from each author/class
     distances = {}
     for author in centroids.keys():
@@ -195,11 +199,11 @@ if __name__ == "__main__":
         distances[author.lower()] = distance
 
     for author in distances:
-        print(f"Author: {author.lower()}, Distance:{distances[author.lower()]}\n")
+        print(f"\nAuthor: {author.lower()}, Euclidian Distance:{distances[author.lower()]}\n")
 
     # Find the smallest distance and classify the disputed document for that author
     correct_author = min(distances, key=distances.get)
     # disputed_document = disputed_corpus_path.glob("*.txt")
     files = os.listdir(disputed_corpus_path)
     disputed_document = [i for i in files if i.endswith('.txt')]
-    print(f"Disputed document {disputed_document} belongs to the author: {correct_author}\n")
+    print(f"\nDisputed document {disputed_document} belongs to the author: {correct_author}\n")

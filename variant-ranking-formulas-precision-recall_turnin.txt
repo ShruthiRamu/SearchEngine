@@ -1,0 +1,119 @@
+/usr/local/bin/python3.7 /Users/macuser/Documents/CSULB/SearchEngineTechnology/Project/CECS529-SearchEngineTechnology/main_precision_recall.py
+Indexing..
+
+############### DEFAULT STRATEGY ####################
+
+Average Throughput for 30 iterations: 8.288582381112603 queries/second
+Top 50 documents for query: what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .
+
+Relevant:  51
+Relevant:  184
+Relevant:  12
+Relevant:  486
+Non-Relevant: 878
+Non-Relevant: 573
+Relevant:  879
+Relevant:  13
+Non-Relevant: 665
+Non-Relevant: 746
+Non-Relevant: 914
+Non-Relevant: 1361
+Non-Relevant: 141
+Non-Relevant: 944
+Non-Relevant: 359
+Non-Relevant: 429
+Relevant:  102
+Relevant:  14
+Non-Relevant: 1268
+Non-Relevant: 1340
+Relevant:  875
+Non-Relevant: 792
+Non-Relevant: 280
+Non-Relevant: 747
+Non-Relevant: 172
+Non-Relevant: 36
+Non-Relevant: 329
+Relevant:  876
+Non-Relevant: 606
+Relevant:  378
+Non-Relevant: 435
+Non-Relevant: 78
+Non-Relevant: 332
+Non-Relevant: 1186
+Relevant:  56
+Non-Relevant: 1111
+Non-Relevant: 1042
+Non-Relevant: 1003
+Non-Relevant: 252
+Non-Relevant: 219
+Non-Relevant: 817
+Non-Relevant: 982
+Non-Relevant: 1263
+Non-Relevant: 1144
+Non-Relevant: 663
+Non-Relevant: 717
+Non-Relevant: 414
+Non-Relevant: 526
+Non-Relevant: 374
+Relevant:  29
+Query: what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .
+Average precision: 0.2784735503396761
+
+
+############### OKAPI STRATEGY ####################
+
+Average Throughput for 30 iterations: 1.6358551926686593 queries/second
+Top 50 documents for query: what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .
+
+Relevant:51
+Relevant:184
+Relevant:486
+Relevant:12
+Non-Relevant:573
+Non-Relevant:878
+Non-Relevant:914
+Non-Relevant:665
+Non-Relevant:141
+Non-Relevant:1361
+Non-Relevant:792
+Non-Relevant:78
+Non-Relevant:746
+Non-Relevant:944
+Relevant:14
+Non-Relevant:1003
+Non-Relevant:329
+Non-Relevant:1268
+Non-Relevant:172
+Non-Relevant:36
+Relevant:13
+Non-Relevant:219
+Non-Relevant:435
+Non-Relevant:526
+Non-Relevant:252
+Non-Relevant:1072
+Non-Relevant:359
+Non-Relevant:1263
+Relevant:29
+Relevant:56
+Non-Relevant:374
+Non-Relevant:1335
+Non-Relevant:332
+Relevant:876
+Relevant:875
+Non-Relevant:1144
+Non-Relevant:251
+Non-Relevant:729
+Relevant:879
+Non-Relevant:747
+Non-Relevant:1340
+Non-Relevant:576
+Non-Relevant:42
+Non-Relevant:717
+Non-Relevant:453
+Non-Relevant:202
+Non-Relevant:280
+Non-Relevant:1186
+Non-Relevant:1338
+Non-Relevant:663
+Query: what similarity laws must be obeyed when constructing aeroelastic models of heated high speed aircraft .
+Average precision: 0.2055022429716421
