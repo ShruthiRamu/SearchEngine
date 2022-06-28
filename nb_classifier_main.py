@@ -186,7 +186,7 @@ if __name__ == "__main__":
                             prior_sums += log10(prior)
                         except ValueError:
                             print("here")
-                            prior_sums += 0
+                            prior_sums += (1 / size_top_terms)
             cd = P_c + prior_sums
             authors_docs_cds[row, doc.id] = cd
 
