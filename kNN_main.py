@@ -86,7 +86,7 @@ def get_author(num):
 
 
 def tuple_lowest(list):
-    lowest = (0, 1)
+    lowest = (0, 99)
     for i in list:
         if i[1] < lowest[1]:
             lowest = i
@@ -138,6 +138,16 @@ def tie_break2(lowest_list):
 
 
 if __name__ == "__main__":
+    # Create v(d) for all documents
+    all_corpus_path = Path("federalistvocab")
+    all_corpus = DirectoryCorpus.load_text_directory(all_corpus_path, ".txt")
+    num_docs = len(list(all_corpus_path.glob("*.txt")))
+    index_path = all_corpus_path / "index"
+    index_path = index_path.resolve()
+
+    index_writer = DiskIndexWriter(index_path)
+    all_disk_index = DiskPositionalIndex(index_writer, num_docs)
+    vocabulary = all_disk_index.vocabulary()
     dis_count = 49
     while dis_count < 64:
         if dis_count == 58:
@@ -147,6 +157,26 @@ if __name__ == "__main__":
         doc_list = []
         doc_count = 1
         k = 5
+        # Create v(d) for disputed documents
+        paper = "paper_" + str(dis_count)
+        disputed_corpus_dir = Path("federalist-papers-disputed")
+        disputed_corpus_path = disputed_corpus_dir / paper
+        disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
+        num_docs = len(list(disputed_corpus_path.glob("*.txt")))
+        index_path = disputed_corpus_path / "index"
+        index_path = index_path.resolve()
+        index_writer = DiskIndexWriter(index_path)
+        disputed_disk_index = DiskPositionalIndex(index_writer, num_docs)
+        vd_disputed = {}
+        # For each term in the vocabulary find the wdt
+        for term in vocabulary:
+            postings = disputed_disk_index.get_postings(term=term)
+            vd_disputed[term] = 0
+            for posting in postings:
+                wdt = 1 + ln(posting.tftd)
+                Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
+                # Update the components for the term
+                vd_disputed[term] = wdt / Ld
         while doc_count < 86:
 
             # skip disputed documents
@@ -165,83 +195,14 @@ if __name__ == "__main__":
             index_path = corpus_path / ("index")
             index_path = index_path.resolve()
 
-            """positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = index_corpus(
-                corpus)
-
-            if not index_path.is_dir():
-                index_path.mkdir()
-            index_writer = DiskIndexWriter(index_path, document_weights=document_weights,
-                                           docLengthd=document_tokens_length_per_document,
-                                           byteSized=byte_size_ds, average_tftd=average_tftds,
-                                           document_tokens_length_average=document_tokens_length_average)
-            if not index_writer.posting_path.is_file():
-                index_writer.write_index(positional_index)
-
-            disk_index = DiskPositionalIndex(index_writer, num_docs=num_docs)"""
-
             index_writer = DiskIndexWriter(index_path)
             disk_index = DiskPositionalIndex(index_writer, num_docs)
 
-            # Create v(d) for disputed documents
-            paper = "paper_" + str(dis_count)
-            disputed_corpus_dir = Path("federalist-papers-disputed")
-            disputed_corpus_path = disputed_corpus_dir / paper
-            disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
-            num_docs = len(list(disputed_corpus_path.glob("*.txt")))
-            index_path = disputed_corpus_path / "index"
-            index_path = index_path.resolve()
 
-            """positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
-                index_corpus(disputed_corpus)
 
-            if not index_path.is_dir():
-                index_path.mkdir()
-            index_writer = DiskIndexWriter(index_path, document_weights=document_weights,
-                                           docLengthd=document_tokens_length_per_document,
-                                           byteSized=byte_size_ds, average_tftd=average_tftds,
-                                           document_tokens_length_average=document_tokens_length_average)
-            if not index_writer.posting_path.is_file():
-                index_writer.write_index(positional_index)
-
-            disputed_disk_index = DiskPositionalIndex(index_writer, num_docs=num_docs)"""
-
-            index_writer = DiskIndexWriter(index_path)
-            disputed_disk_index = DiskPositionalIndex(index_writer, num_docs)
-
-            # Create v(d) for all documents
-            """all_corpus_path = Path("federalistvocab")
-            all_corpus = DirectoryCorpus.load_text_directory(all_corpus_path, ".txt")
-            numall_docs = len(list(all_corpus_path.glob("*.txt")))
-            index_path = all_corpus_path / "index"
-            index_path = index_path.resolve()
-
-            positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
-                index_corpus(all_corpus)
-
-            if not index_path.is_dir():
-                index_path.mkdir()
-            index_writer = DiskIndexWriter(index_path, document_weights=document_weights,
-                                           docLengthd=document_tokens_length_per_document,
-                                           byteSized=byte_size_ds, average_tftd=average_tftds,
-                                           document_tokens_length_average=document_tokens_length_average)
-            if not index_writer.posting_path.is_file():
-                index_writer.write_index(positional_index)
-
-            all_disk_index = DiskPositionalIndex(index_writer, num_docs=numall_docs)
-
-            # get vocab for all documents
-            allvocabulary = all_disk_index.vocabulary()"""
             # get vocab for each disputed document
-            vocabulary = disputed_disk_index.vocabulary()
-            vd_disputed = {}
-            # For each term in the vocabulary find the wdt
-            for term in vocabulary:
-                postings = disputed_disk_index.get_postings(term=term)
-                for posting in postings:
-                    wdt = 1 + ln(posting.tftd)
-                    Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
-                    # Update the components for the term
-                    vd_disputed[term] = wdt / Ld
+
+
             """if doc_count == 1:
                 for term in allvocabulary:
                     postings = disputed_disk_index.get_postings(term=term)
@@ -252,16 +213,17 @@ if __name__ == "__main__":
                         Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
                         # Update the components for the term
                         vd_disputed[term] = wdt / Ld"""
-
-            # print(dict(sorted(vd_disputed.items())).values())
             if vd_disputed.get(''):
                 vd_disputed.pop('')
+            """if dis_count == 53 and doc_count == 1:
+                print(dict(sorted(vd_disputed.items())))"""
             # get vocab for non disputed document
-            vocabulary2 = disk_index.vocabulary()
+            # vocabulary2 = disk_index.vocabulary()
             vd_nondisputed = {}
             # For each term in the vocabulary find the wdt
-            for term in vocabulary2:
+            for term in vocabulary:
                 postings = disk_index.get_postings(term=term)
+                vd_nondisputed[term] = 0
                 for posting in postings:
                     wdt = 1 + ln(posting.tftd)
                     Ld = disk_index.get_doc_info(posting.doc_id, "Ld")
