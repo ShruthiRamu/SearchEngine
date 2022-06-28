@@ -217,6 +217,9 @@ if __name__ == "__main__":
 
             total_average_precision = 0
 
+            response_time = 0
+            mean_response_time = 0
+
             # loop through each query
             for i in range(0, len(queries)):
 
@@ -228,7 +231,10 @@ if __name__ == "__main__":
                 for j in range(0, len(relevant_document)):
                     relevant_document[j] = int(relevant_document[j])
 
+                start = time_ns()
                 accumulator = rankedStrategy.calculate(query, disk_index, corpus_size)
+                end = time_ns()
+                response_time += (end - start) / 1e+9
 
                 query_result_documents = []
 
@@ -278,6 +284,12 @@ if __name__ == "__main__":
             # print("Total number of queries: ", len(queries))
             MAP = total_average_precision / len(queries)
             print(f"MAP: {MAP}")
+
+            mean_response_time = response_time / len(queries)
+            average_throughput = 1 / mean_response_time
+
+            print(f"Mean Response Time to satisfy a query:{mean_response_time}")
+            print(f"Throughput(queries/second) of the system:{average_throughput} ")
 
             # print("Calculating MAP for all the 4 formulas....")
             # For each formula calculate MAP
