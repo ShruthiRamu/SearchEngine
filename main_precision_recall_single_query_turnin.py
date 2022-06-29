@@ -161,9 +161,15 @@ if __name__ == "__main__":
         # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
         # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+<<<<<<< Updated upstream:main_precision_recall_single_query_turnin.py
         response_time += (end - start) / 1e+9
     mean_response_time = response_time/30
     average_throughput = 1/mean_response_time
+=======
+        mean_response_time = (end - start) / 1e+9
+        throughput += 1 / mean_response_time
+    average_throughput = throughput / 30
+>>>>>>> Stashed changes:main_precision_recall.py
     print(f"Average Throughput for 30 iterations: {average_throughput} queries/second")
     # start = time_ns()
     # # For default strategy
@@ -171,8 +177,8 @@ if __name__ == "__main__":
     # # TODO: Should we end the time here? or after the average precision calculation??
     # end = time_ns()
     # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    # mean_response_time = (end - start) / 1e+9
-    # throughput = 1 / mean_response_time
+    # response_time = (end - start) / 1e+9
+    # throughput = 1 / response_time
     # print("Throughput: ", throughput)
 
     query_result_documents = []
@@ -262,8 +268,8 @@ if __name__ == "__main__":
     # accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
     # end = time_ns()
     # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-    # mean_response_time = (end - start) / 1e+9
-    # throughput = 1 / mean_response_time
+    # response_time = (end - start) / 1e+9
+    # throughput = 1 / response_time
     # print("Throughput: ", throughput)
 
     query_result_documents = []
