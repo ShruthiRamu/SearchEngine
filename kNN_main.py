@@ -139,7 +139,7 @@ def tie_break2(lowest_list):
 
 if __name__ == "__main__":
     # Create v(d) for all documents
-    all_corpus_path = Path("federalistvocab")
+    """all_corpus_path = Path("federalistvocab")
     all_corpus = DirectoryCorpus.load_text_directory(all_corpus_path, ".txt")
     num_docs = len(list(all_corpus_path.glob("*.txt")))
     index_path = all_corpus_path / "index"
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     index_writer = DiskIndexWriter(index_path)
     all_disk_index = DiskPositionalIndex(index_writer, num_docs)
-    vocabulary = all_disk_index.vocabulary()
+    vocabulary = all_disk_index.vocabulary()"""
     dis_count = 49
     while dis_count < 64:
         if dis_count == 58:
@@ -169,9 +169,10 @@ if __name__ == "__main__":
         disputed_disk_index = DiskPositionalIndex(index_writer, num_docs)
         vd_disputed = {}
         # For each term in the vocabulary find the wdt
-        for term in vocabulary:
+        dis_vocab = disputed_disk_index.vocabulary()
+        for term in dis_vocab:
             postings = disputed_disk_index.get_postings(term=term)
-            vd_disputed[term] = 0
+            # vd_disputed[term] = 0
             for posting in postings:
                 wdt = 1 + ln(posting.tftd)
                 Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
@@ -200,30 +201,19 @@ if __name__ == "__main__":
 
 
 
-            # get vocab for each disputed document
-
-
-            """if doc_count == 1:
-                for term in allvocabulary:
-                    postings = disputed_disk_index.get_postings(term=term)
-                    if not postings:
-                        vd_disputed[term] = 0
-                    for posting in postings:
-                        wdt = 1 + ln(posting.tftd)
-                        Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
-                        # Update the components for the term
-                        vd_disputed[term] = wdt / Ld"""
             if vd_disputed.get(''):
                 vd_disputed.pop('')
+
+            # print vocab
             """if dis_count == 53 and doc_count == 1:
                 print(dict(sorted(vd_disputed.items())))"""
             # get vocab for non disputed document
-            # vocabulary2 = disk_index.vocabulary()
+            vocabulary2 = disk_index.vocabulary()
             vd_nondisputed = {}
             # For each term in the vocabulary find the wdt
-            for term in vocabulary:
+            for term in vocabulary2:
                 postings = disk_index.get_postings(term=term)
-                vd_nondisputed[term] = 0
+                # vd_nondisputed[term] = 0
                 for posting in postings:
                     wdt = 1 + ln(posting.tftd)
                     Ld = disk_index.get_doc_info(posting.doc_id, "Ld")
