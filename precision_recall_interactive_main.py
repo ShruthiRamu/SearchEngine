@@ -278,7 +278,7 @@ if __name__ == "__main__":
 
                 total_average_precision += average_precision_default
 
-                # print(f"Query: {query}Average precision: {average_precision_default} \n")
+                # print(f"Query: {query}Average precision: {average_precision} \n")
 
             # print("Total average precision: ", total_average_precision)
             # print("Total number of queries: ", len(queries))
@@ -358,11 +358,11 @@ if __name__ == "__main__":
             #         # print("Sum: ", sum)
             #
             #         # Divide by the total number of relevant documents for average precision for the query
-            #         average_precision_default = sum / total_relevant_documents
+            #         average_precision = sum / total_relevant_documents
             #
-            #         total_average_precision += average_precision_default
+            #         total_average_precision += average_precision
             #
-            #         # print(f"Query: {query}Average precision: {average_precision_default} \n")
+            #         # print(f"Query: {query}Average precision: {average_precision} \n")
             #
             #     # print("Total average precision: ", total_average_precision)
             #     # print("Total number of queries: ", len(queries))

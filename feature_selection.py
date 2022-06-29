@@ -24,10 +24,10 @@ def select_features(indexes: List[Index], K):
     for index in indexes:
         vocab.append(index.vocabulary())
         N += index.num_docs
-    print(f"Total number of documents: {N}")
+    #print(f"Total number of documents: {N}")
     vocab = set(itertools.chain.from_iterable(vocab))
     term_score = {}
-    neal_terms = ['upon', 'although', 'wish', 'whilst', 'lie', 'intend', 'kind', 'constitut', 'trial', 'gentlemen']
+    #neal_terms = ['upon', 'although', 'wish', 'whilst', 'lie', 'intend', 'kind', 'constitut', 'trial', 'gentlemen']
     for term in vocab:
         # Stores number of documents existing in each class
         term_exists = [] # Hamilton Jay Madison
@@ -47,8 +47,8 @@ def select_features(indexes: List[Index], K):
                 ict_score = 0
             term_score[term] = ict_score
 
-    for term in neal_terms:
-        print(f"Term: {term}, ict score: {term_score[term]}")
+    # for term in neal_terms:
+    #     print(f"Term: {term}, ict score: {term_score[term]}")
 
     return nlargest(K, [(score, term) for term, score in term_score.items()])    
 

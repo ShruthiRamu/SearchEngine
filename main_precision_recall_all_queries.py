@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
         total_average_precision += average_precision_default
 
-        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+        # print(f"Query: {query}Average precision: {average_precision} \n")
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
@@ -286,7 +286,7 @@ if __name__ == "__main__":
 
         total_average_precision += average_precision_default
 
-        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+        # print(f"Query: {query}Average precision: {average_precision} \n")
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
@@ -363,7 +363,7 @@ if __name__ == "__main__":
 
         total_average_precision += average_precision_default
 
-        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+        # print(f"Query: {query}Average precision: {average_precision} \n")
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
@@ -440,7 +440,7 @@ if __name__ == "__main__":
 
         total_average_precision += average_precision_default
 
-        # print(f"Query: {query}Average precision: {average_precision_default} \n")
+        # print(f"Query: {query}Average precision: {average_precision} \n")
 
     print("Total average precision: ", total_average_precision)
     print("Total number of queries: ", len(queries))
