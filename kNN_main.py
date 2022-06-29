@@ -3,7 +3,6 @@ import os
 from diskindexwriter import DiskIndexWriter
 from documents.corpus import DocumentCorpus
 from documents.directorycorpus import DirectoryCorpus
-from feature_selection import select_features
 from indexes.diskpositionalindex import DiskPositionalIndex
 from indexes.index import Index
 from indexes.positionalinvertedindex import PositionalInvertedIndex

@@ -106,13 +106,13 @@ if __name__ == "__main__":
 
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 
-    # TODO: Open the queries file and each line is a query. Loop through each line as a single query and calculate
+    # Open the queries file and each line is a query. Loop through each line as a single query and calculate
     #  MAP for each query
     f = open("relevance_cranfield/relevance/queries", "r")
     queries = f.readlines()
     f.close()
 
-    # TODO: Go through the relevant documents from the qrel file, each line corresponds to single query
+    # Go through the relevant documents from the qrel file, each line corresponds to single query
 
     f = open("relevance_cranfield/relevance/qrel", "r")
     relevant_documents = f.readlines()
@@ -142,6 +142,10 @@ if __name__ == "__main__":
 
     total_average_precision = 0
 
+    response_time = 0
+    mean_response_time = 0
+    print("\n############### Default STRATEGY ####################\n")
+
     # loop through each query
     for i in range(0, len(queries)):
 
@@ -155,22 +159,18 @@ if __name__ == "__main__":
 
         ########################## Default ##############################
 
-        print("\n############### DEFAULT STRATEGY ####################\n")
         start = time_ns()
         # For default strategy
         accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
-        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-        mean_response_time = (end - start) / 1e+9
-        throughput = 1 / mean_response_time
-        print("Throughput: ", throughput)
+        #print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        response_time += (end - start) / 1e+9
 
         query_result_documents = []
 
         K = 50
         heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-        print(f"Top {K} documents for query: {query}")
+        #print(f"Top {K} documents for query: {query}")
         for k_documents in nlargest(K, heap):
             score, doc_id = k_documents
             # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
@@ -179,7 +179,7 @@ if __name__ == "__main__":
         for j in range(0, len(query_result_documents)):
             query_result_documents[j] = int(query_result_documents[j])
 
-        # TODO: Calculate the average precision for the first query
+        # Calculate the average precision for the query
         total_relevant_documents = len(relevant_document)
 
         # print("\nRelevant documents found in the ranked retrieval query result: ")
@@ -216,11 +216,18 @@ if __name__ == "__main__":
     MAP = total_average_precision / len(queries)
     print(f"MAP: {MAP}")
 
+    mean_response_time = response_time / len(queries)
+    average_throughput = 1 / mean_response_time
+
+    print(f"Mean Response Time to satisfy a query:{mean_response_time}")
+    print(f"Throughput(queries/second) of the system:{average_throughput} ")
+
     # ############################## OKAPI Strategy ##############################################
-
     print("\n############### OKAPI STRATEGY ####################\n")
-    total_average_precision = 0
 
+    total_average_precision = 0
+    response_time = 0
+    mean_response_time = 0
     # loop through each query
     for i in range(0, len(queries)):
 
@@ -232,22 +239,18 @@ if __name__ == "__main__":
         for j in range(0, len(relevant_document)):
             relevant_document[j] = int(relevant_document[j])
 
-        print("\n############### OKAPI STRATEGY ####################\n")
         start = time_ns()
         # For default strategy
         accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
-        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-        mean_response_time = (end - start) / 1e+9
-        throughput = 1 / mean_response_time
-        print("Throughput: ", throughput)
+        #print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        response_time += (end - start) / 1e+9
 
         query_result_documents = []
 
         K = 50
         heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-        print(f"Top {K} documents for query: {query}")
+        #print(f"Top {K} documents for query: {query}")
         for k_documents in nlargest(K, heap):
             score, doc_id = k_documents
             # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
@@ -256,7 +259,7 @@ if __name__ == "__main__":
         for j in range(0, len(query_result_documents)):
             query_result_documents[j] = int(query_result_documents[j])
 
-        # TODO: Calculate the average precision for the first query
+        # Calculate the average precision for the query
         total_relevant_documents = len(relevant_document)
 
         # print("\nRelevant documents found in the ranked retrieval query result: ")
@@ -292,12 +295,19 @@ if __name__ == "__main__":
     print("Total number of queries: ", len(queries))
     MAP = total_average_precision / len(queries)
     print(f"MAP: {MAP}")
+
+    mean_response_time = response_time / len(queries)
+    average_throughput = 1 / mean_response_time
+
+    print(f"Mean Response Time to satisfy a query:{mean_response_time}")
+    print(f"Throughput(queries/second) of the system:{average_throughput} ")
 
     # ####################### Traditional-tf-idf ###################################
 
     print("\n############### TRADITIONAL STRATEGY ####################\n")
     total_average_precision = 0
-
+    response_time = 0
+    mean_response_time = 0
     # loop through each query
     for i in range(0, len(queries)):
 
@@ -309,22 +319,18 @@ if __name__ == "__main__":
         for j in range(0, len(relevant_document)):
             relevant_document[j] = int(relevant_document[j])
 
-        print("\n############### Traditional STRATEGY ####################\n")
         start = time_ns()
         # For default strategy
         accumulator = rankedStrategy_traditional.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
-        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-        mean_response_time = (end - start) / 1e+9
-        throughput = 1 / mean_response_time
-        print("Throughput: ", throughput)
+        #print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        response_time += (end - start) / 1e+9
 
         query_result_documents = []
 
         K = 50
         heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-        print(f"Top {K} documents for query: {query}")
+        #print(f"Top {K} documents for query: {query}")
         for k_documents in nlargest(K, heap):
             score, doc_id = k_documents
             # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
@@ -333,7 +339,7 @@ if __name__ == "__main__":
         for j in range(0, len(query_result_documents)):
             query_result_documents[j] = int(query_result_documents[j])
 
-        # TODO: Calculate the average precision for the first query
+        # Calculate the average precision for the query
         total_relevant_documents = len(relevant_document)
 
         # print("\nRelevant documents found in the ranked retrieval query result: ")
@@ -369,12 +375,19 @@ if __name__ == "__main__":
     print("Total number of queries: ", len(queries))
     MAP = total_average_precision / len(queries)
     print(f"MAP: {MAP}")
+
+    mean_response_time = response_time / len(queries)
+    average_throughput = 1 / mean_response_time
+
+    print(f"Mean Response Time to satisfy a query:{mean_response_time}")
+    print(f"Throughput(queries/second) of the system:{average_throughput} ")
 
     # ####################### Wacky ###################################
 
     print("\n############### WACKY STRATEGY ####################\n")
     total_average_precision = 0
-
+    response_time = 0
+    mean_response_time = 0
     # loop through each query
     for i in range(0, len(queries)):
 
@@ -386,22 +399,19 @@ if __name__ == "__main__":
         for j in range(0, len(relevant_document)):
             relevant_document[j] = int(relevant_document[j])
 
-        print("\n############### Wacky STRATEGY ####################\n")
         start = time_ns()
         # For default strategy
         accumulator = rankedStrategy_wacky.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
-        print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-        mean_response_time = (end - start) / 1e+9
-        throughput = 1 / mean_response_time
-        print("Throughput: ", throughput)
+        #print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
+        response_time += (end - start) / 1e+9
+
 
         query_result_documents = []
 
         K = 50
         heap = [(score, doc_id) for doc_id, score in accumulator.items()]
-        print(f"Top {K} documents for query: {query}")
+        #print(f"Top {K} documents for query: {query}")
         for k_documents in nlargest(K, heap):
             score, doc_id = k_documents
             # print(f"Doc filename: {corpus.get_document(doc_id).get_file_name()}, Score: {score}")
@@ -410,7 +420,7 @@ if __name__ == "__main__":
         for j in range(0, len(query_result_documents)):
             query_result_documents[j] = int(query_result_documents[j])
 
-        # TODO: Calculate the average precision for the first query
+        # Calculate the average precision for the query
         total_relevant_documents = len(relevant_document)
 
         # print("\nRelevant documents found in the ranked retrieval query result: ")
@@ -446,4 +456,11 @@ if __name__ == "__main__":
     print("Total number of queries: ", len(queries))
     MAP = total_average_precision / len(queries)
     print(f"MAP: {MAP}")
+
+    mean_response_time = response_time / len(queries)
+    average_throughput = 1 / mean_response_time
+
+    print(f"Mean Response Time to satisfy a query:{mean_response_time}")
+    print(f"Throughput(queries/second) of the system:{average_throughput} ")
+
 

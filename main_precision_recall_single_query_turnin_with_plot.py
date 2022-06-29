@@ -13,7 +13,6 @@ from math import sqrt
 from typing import List
 from heapq import nlargest
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def index_corpus(corpus: DocumentCorpus) -> (Index, List[float], List[int], int, float, float):
@@ -107,13 +106,13 @@ if __name__ == "__main__":
 
     strategyMap = {1: DefaultStrategy, 2: TraditionalStrategy, 3: OkapiBM25Strategy, 4: WackyStrategy}
 
-    # TODO: Open the queries file and each line is a query. Loop through each line as a single query and calculate
+    # Open the queries file and each line is a query. Loop through each line as a single query and calculate
     #  MAP for each query
     f = open("relevance_cranfield/relevance/queries", "r")
     queries = f.readlines()
     f.close()
 
-    # TODO: Go through the relevant documents from the qrel file, each line corresponds to single query
+    # Go through the relevant documents from the qrel file, each line corresponds to single query
 
     f = open("relevance_cranfield/relevance/qrel", "r")
     relevant_documents = f.readlines()
@@ -158,23 +157,15 @@ if __name__ == "__main__":
         start = time_ns()
         # For default strategy
         accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
         # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
-<<<<<<< Updated upstream:main_precision_recall_single_query_turnin.py
         response_time += (end - start) / 1e+9
     mean_response_time = response_time/30
     average_throughput = 1/mean_response_time
-=======
-        mean_response_time = (end - start) / 1e+9
-        throughput += 1 / mean_response_time
-    average_throughput = throughput / 30
->>>>>>> Stashed changes:main_precision_recall.py
     print(f"Average Throughput for 30 iterations: {average_throughput} queries/second")
     # start = time_ns()
     # # For default strategy
     # accumulator = rankedStrategy_default.calculate(query, disk_index, corpus_size)
-    # # TODO: Should we end the time here? or after the average precision calculation??
     # end = time_ns()
     # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
     # response_time = (end - start) / 1e+9
@@ -196,7 +187,7 @@ if __name__ == "__main__":
     for i in range(0, len(query_result_documents)):
         query_result_documents[i] = int(query_result_documents[i])
 
-    # TODO: Calculate the average precision for the first query
+    # Calculate the average precision for the first query
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
@@ -256,7 +247,6 @@ if __name__ == "__main__":
         start = time_ns()
         # For Okapi strategy
         accumulator = rankedStrategy_okapi.calculate(query, disk_index, corpus_size)
-        # TODO: Should we end the time here? or after the average precision calculation??
         end = time_ns()
         # print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
         response_time += (end - start) / 1e+9
@@ -287,7 +277,7 @@ if __name__ == "__main__":
     for i in range(0, len(query_result_documents)):
         query_result_documents[i] = int(query_result_documents[i])
 
-    # TODO: Calculate the average precision for the first query
+    # Calculate the average precision for the first query
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
@@ -358,7 +348,6 @@ if __name__ == "__main__":
     start = time_ns()
     # For default strategy
     accumulator = rankedStrategy_traditional.calculate(query, disk_index, corpus_size)
-    # TODO: Should we end the time here? or after the average precision calculation??
     end = time_ns()
     print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
     mean_response_time = (end - start) / 1e+9
@@ -380,7 +369,7 @@ if __name__ == "__main__":
     for i in range(0, len(query_result_documents)):
         query_result_documents[i] = int(query_result_documents[i])
 
-    # TODO: Calculate the average precision for the first query
+    # Calculate the average precision for the first query
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list
@@ -435,7 +424,6 @@ if __name__ == "__main__":
     start = time_ns()
     # For default strategy
     accumulator = rankedStrategy_wacky.calculate(query, disk_index, corpus_size)
-    # TODO: Should we end the time here? or after the average precision calculation??
     end = time_ns()
     print(f"Ranked Retrieval took: {(end - start) / 1e+9} secs\n")
     mean_response_time = (end - start) / 1e+9
@@ -457,7 +445,7 @@ if __name__ == "__main__":
     for i in range(0, len(query_result_documents)):
         query_result_documents[i] = int(query_result_documents[i])
 
-    # TODO: Calculate the average precision for the first query
+    # Calculate the average precision for the first query
     total_relevant_documents = len(relevant_document)
 
     # Loop through the 50 documents returned and check if the filename is present in the relevant documents list

@@ -139,7 +139,7 @@ if __name__ == "__main__":
         queries = f.readlines()
         f.close()
 
-        # TODO: Go through the relevant documents from the qrel file, each line corresponds to single query
+        # Go through the relevant documents from the qrel file, each line corresponds to single query
 
         f = open("relevance_cranfield/relevance/qrel", "r")
         relevant_documents = f.readlines()
@@ -153,7 +153,7 @@ if __name__ == "__main__":
         queries = f.readlines()
         f.close()
 
-        # TODO: Go through the relevant documents from the qrel file, each line corresponds to single query
+        # Go through the relevant documents from the qrel file, each line corresponds to single query
 
         f = open("relevance_parks/relevance/qrel", "r")
         relevant_documents = f.readlines()
