@@ -52,14 +52,14 @@ def select_features(indexes: List[Index], K):
 
     return nlargest(K, [(score, term) for term, score in term_score.items()])    
 
-N = 801_948
-term_exist = [49, 27_652]
-term_notexist = [141, 774_106]
-
-matrix = array([term_exist, term_notexist], dtype='float64')
-print(matrix)
-score = mutual_info(matrix, N)
-print(f"Final Score: {score}")
+# N = 801_948
+# term_exist = [49, 27_652]
+# term_notexist = [141, 774_106]
+#
+# matrix = array([term_exist, term_notexist], dtype='float64')
+# print(matrix)
+# score = mutual_info(matrix, N)
+# print(f"Final Score: {score}")
 
 # col_sum = sum(matrix, axis=0)
 # print("Columns: ", col_sum)
