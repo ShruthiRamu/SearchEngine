@@ -1,10 +1,8 @@
 import os
-import pathlib
 
 from diskindexwriter import DiskIndexWriter
 from documents.corpus import DocumentCorpus
 from documents.directorycorpus import DirectoryCorpus
-from feature_selection import select_features
 from indexes.diskpositionalindex import DiskPositionalIndex
 from indexes.index import Index
 from indexes.positionalinvertedindex import PositionalInvertedIndex
@@ -78,7 +76,7 @@ def index_corpus(corpus: DocumentCorpus) -> Tuple[Index, List[float], List[int],
 
 
 # -------------------------------
-# Main Application of Naive Bayes Classifier
+# Main Application of Rocchio Classifier
 if __name__ == "__main__":
 
     authors = ['HAMILTON', 'JAY', 'MADISON']
@@ -119,10 +117,11 @@ if __name__ == "__main__":
             for posting in postings:
                 wdt = 1 + ln(posting.tftd)
                 Ld = index.get_doc_info(posting.doc_id, "Ld")
-                # Update the components(wdt) for the term and add it to the sum
+                # Update the components(wdt) for the term
                 if term not in vd.keys():
                     vd[term] = wdt / Ld
                 else:
+                    # if term already present then add it to the sum for the final centroid calculation
                     vd[term] += wdt / Ld
         # Find the centroid by dividing each term with total number of docs for that author
         centroid = {}
@@ -132,78 +131,82 @@ if __name__ == "__main__":
 
         # print(f"Author: {author}, Centroid: {centroids[author.lower()]}\n")
 
-    # TODO: Do this for each document. Do we need to create disk_index for each document??
-    # Create v(d) for disputed documents
-    # disputed_corpus_path = Path("dummy-disputed")
-    disputed_corpus_path = Path("dummy-disputed-rocchio")
-    disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
-    num_docs = len(list(disputed_corpus_path.glob("*.txt")))
-    index_path = disputed_corpus_path / "index"
-    index_path = index_path.resolve()
+    # Classify each disputed document
+    disputed_documents_dir = Path("rocchio-disputed")
+    disputed_papers = ['paper_49', 'paper_50', 'paper_51', 'paper_52', 'paper_53', 'paper_54', 'paper_55', 'paper_56',
+                       'paper_57', 'paper_62', 'paper_63']
+    # For each paper in the disputed directory
+    for paper in disputed_papers:
+        # Create v(d) for disputed documents
+        disputed_corpus_path = disputed_documents_dir / paper
+        disputed_corpus = DirectoryCorpus.load_text_directory(disputed_corpus_path, ".txt")
+        num_docs = len(list(disputed_corpus_path.glob("*.txt")))
+        index_path = disputed_corpus_path / "index"
+        index_path = index_path.resolve()
 
-    # for txt_file in pathlib.Path('federalist-papers/DISPUTED').glob('*.txt'):
-    #     print(f"text files under disputed folder: {txt_file}")
+        positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
+            index_corpus(disputed_corpus)
 
-    positional_index, document_weights, document_tokens_length_per_document, byte_size_ds, average_tftds, document_tokens_length_average = \
-        index_corpus(disputed_corpus)
+        if not index_path.is_dir():
+            index_path.mkdir()
+        index_writer = DiskIndexWriter(index_path, document_weights=document_weights,
+                                       docLengthd=document_tokens_length_per_document,
+                                       byteSized=byte_size_ds, average_tftd=average_tftds,
+                                       document_tokens_length_average=document_tokens_length_average)
+        if not index_writer.posting_path.is_file():
+            index_writer.write_index(positional_index)
 
-    if not index_path.is_dir():
-        index_path.mkdir()
-    index_writer = DiskIndexWriter(index_path, document_weights=document_weights,
-                                   docLengthd=document_tokens_length_per_document,
-                                   byteSized=byte_size_ds, average_tftd=average_tftds,
-                                   document_tokens_length_average=document_tokens_length_average)
-    if not index_writer.posting_path.is_file():
-        index_writer.write_index(positional_index)
+        disputed_disk_index = DiskPositionalIndex(index_writer, num_docs=num_docs)
 
-    disputed_disk_index = DiskPositionalIndex(index_writer, num_docs=num_docs)
+        # get vocab for each disputed document
+        vocabulary = disputed_disk_index.vocabulary()
+        vd_disputed = {}
+        # For each term in the vocabulary find the wdt
+        for term in vocabulary:
+            postings = disputed_disk_index.get_postings(term=term)
+            for posting in postings:
+                wdt = 1 + ln(posting.tftd)
+                Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
+                # Update the normalized vector components for the term with wdt/Ld
+                vd_disputed[term] = wdt / Ld
 
-    # get vocab for each disputed document
-    vocabulary = disputed_disk_index.vocabulary()
-    vd_disputed = {}
-    # For each term in the vocabulary find the wdt
-    for term in vocabulary:
-        postings = disputed_disk_index.get_postings(term=term)
-        for posting in postings:
-            wdt = 1 + ln(posting.tftd)
-            Ld = disputed_disk_index.get_doc_info(posting.doc_id, "Ld")
-            # Update the components for the term
-            vd_disputed[term] = wdt / Ld
+        # the first 30 components (alphabetically) of the normalized vector for the document
+        print(
+            f"The first 30 components (alphabetically) of the normalized vector for the document {paper}:{list(vd_disputed.items())[:30]}\n")
 
-    # the first 30 components (alphabetically) of the normalized vector for the document
-    print(f"\nthe first 30 components (alphabetically) of the normalized vector for the document:{list(vd_disputed.items())[:30]}")
+        # find euclidian distance for the disputed document from each author/class
+        distances = {}
+        for author in centroids.keys():
+            distance = 0.
+            for key, value in vd_disputed.items():
+                # Get the first value for the term from the centroid
+                centroid = centroids[author.lower()]
+                if not centroid.get(key):
+                    first_value = 0
+                else:
+                    first_value = centroid.get(key)
+                # Get the second value for the term from the v(d) of disputed document
+                second_value = value
 
-    # find euclidian distance for the disputed document from each author/class
-    distances = {}
-    for author in centroids.keys():
-        distance = 0.
-        for key, value in vd_disputed.items():
-            # Get the first value for the term from the centroid
-            centroid = centroids[author.lower()]
-            if not centroid.get(key):
-                first_value = 0
-            else:
-                first_value = centroid.get(key)
-            # Get the second value for the term from the v(d) of disputed document
-            second_value = value
+                # Subtract the values
+                difference = first_value - second_value
 
-            # Subtract the values
-            difference = first_value - second_value
+                # square the difference
+                squared_difference = difference ** 2
 
-            # square the difference
-            squared_difference = difference ** 2
+                # add it to the final result
 
-            # add it to the final result
-            distance += squared_difference
-        distance = sqrt(distance)
-        distances[author.lower()] = distance
+                distance += squared_difference
+            distance = sqrt(distance)
+            distances[author.lower()] = distance
 
-    for author in distances:
-        print(f"\nAuthor: {author.lower()}, Euclidian Distance:{distances[author.lower()]}\n")
+        for author in distances:
+            print(f"Author: {author.lower()}, Euclidian Distance:{distances[author.lower()]}")
 
-    # Find the smallest distance and classify the disputed document for that author
-    correct_author = min(distances, key=distances.get)
-    # disputed_document = disputed_corpus_path.glob("*.txt")
-    files = os.listdir(disputed_corpus_path)
-    disputed_document = [i for i in files if i.endswith('.txt')]
-    print(f"\nDisputed document {disputed_document} belongs to the author: {correct_author}\n")
+        # Find the smallest distance and classify the disputed document for that author
+        correct_author = min(distances, key=distances.get)
+
+        # disputed_document = disputed_corpus_path.glob("*.txt")
+        # files = os.listdir(disputed_corpus_path)
+        # disputed_document = [i for i in files if i.endswith('.txt')]
+        print(f"Disputed document {paper} belongs to the author: {correct_author}\n")
