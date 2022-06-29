@@ -22,6 +22,7 @@ class DiskPositionalIndex(Index):
     def __init__(self, disk_index_writer: DiskIndexWriter, num_docs=0):
         self.disk_index_writer = disk_index_writer
         self.num_docs = num_docs
+        self.f = open(self.disk_index_writer.posting_path, "rb")
 
     def get_positional_postings(self, term: str) -> List[Posting]:
         # Start byte location of term in postings.bin
@@ -31,65 +32,65 @@ class DiskPositionalIndex(Index):
         if start_byte_position != -1:
             # Read from on-disk postings.bin index
             num_bytes = 1
-            with open(self.disk_index_writer.posting_path, "rb") as f:
-                f.seek(start_byte_position)
-                dft = ord(f.read(num_bytes))
-                dft_arr = []
+            #with open(self.disk_index_writer.posting_path, "rb") as f:
+            self.f.seek(start_byte_position)
+            dft = ord(self.f.read(num_bytes))
+            dft_arr = []
 
-                # append all bits belonging to same number to array
+            # append all bits belonging to same number to array
+            while True:
+                if dft < 128:
+                    dft_arr.append(dft)
+                    dft = ord(self.f.read(num_bytes))
+                else:
+                    dft_arr.append(dft)
+                    break
+            dft = VBDecode(dft_arr)
+
+            prev_doc_id = 0
+            for _ in range(dft):
+                doc_id = ord(self.f.read(num_bytes))
+
+                doc_id_arr = []
                 while True:
-                    if dft < 128:
-                        dft_arr.append(dft)
-                        dft = ord(f.read(num_bytes))
+                    if doc_id < 128:
+                        doc_id_arr.append(doc_id)
+                        doc_id = ord(self.f.read(num_bytes))
                     else:
-                        dft_arr.append(dft)
+                        doc_id_arr.append(doc_id)
                         break
-                dft = VBDecode(dft_arr)
+                doc_id = VBDecode(doc_id_arr)
 
-                prev_doc_id = 0
-                for _ in range(dft):
-                    doc_id = ord(f.read(num_bytes))
+                doc_id += prev_doc_id  # Ungapping DocID
+                prev_doc_id = doc_id
+                posting = Posting(doc_id=doc_id)
 
-                    doc_id_arr = []
+                tftd = ord(self.f.read(num_bytes))
+                tftd_arr = []
+                while True:
+                    if tftd < 128:
+                        tftd_arr.append(tftd)
+                        tftd = ord(self.f.read(num_bytes))
+                    else:
+                        tftd_arr.append(tftd)
+                        break
+                tftd = VBDecode(tftd_arr)
+                prev_pos = 0
+                for _ in range(tftd):
+                    position = ord(self.f.read(num_bytes))
+                    pos_arr = []
                     while True:
-                        if doc_id < 128:
-                            doc_id_arr.append(doc_id)
-                            doc_id = ord(f.read(num_bytes))
+                        if position < 128:
+                            pos_arr.append(position)
+                            position = ord(self.f.read(num_bytes))
                         else:
-                            doc_id_arr.append(doc_id)
+                            pos_arr.append(position)
                             break
-                    doc_id = VBDecode(doc_id_arr)
-
-                    doc_id += prev_doc_id  # Ungapping DocID
-                    prev_doc_id = doc_id
-                    posting = Posting(doc_id=doc_id)
-
-                    tftd = ord(f.read(num_bytes))
-                    tftd_arr = []
-                    while True:
-                        if tftd < 128:
-                            tftd_arr.append(tftd)
-                            tftd = ord(f.read(num_bytes))
-                        else:
-                            tftd_arr.append(tftd)
-                            break
-                    tftd = VBDecode(tftd_arr)
-                    prev_pos = 0
-                    for _ in range(tftd):
-                        position = ord(f.read(num_bytes))
-                        pos_arr = []
-                        while True:
-                            if position < 128:
-                                pos_arr.append(position)
-                                position = ord(f.read(num_bytes))
-                            else:
-                                pos_arr.append(position)
-                                break
-                        position = VBDecode(pos_arr)
-                        position += prev_pos  # Ungapping position
-                        prev_pos = position
-                        posting.positions.append(position)
-                    postings.append(posting)
+                    position = VBDecode(pos_arr)
+                    position += prev_pos  # Ungapping position
+                    prev_pos = position
+                    posting.positions.append(position)
+                postings.append(posting)
 
         return postings
 
